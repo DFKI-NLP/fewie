@@ -1,9 +1,10 @@
 import logging
 from typing import Dict, List, Optional, Tuple
 
-import datasets
 import numpy as np
 import torch
+
+import datasets
 
 
 logger = logging.getLogger(__name__)
@@ -17,9 +18,9 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         k_shots: int,
         n_queries: int,
         n_samples: int,
+        label_column_name: str,
         columns: Optional[List[str]] = None,
         ignore_labels: Optional[List[str]] = None,
-        label_column: str = "label",
         deterministic: bool = False,
     ):
         super().__init__()
@@ -31,24 +32,22 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         self.columns = columns
         self.deterministic = deterministic
 
-        self.class_int2str = self.dataset.features[label_column].int2str
-        self.class_str2int = self.dataset.features[label_column].str2int
+        self.feature = self.dataset.features[label_column_name].feature
 
-        classes = set(dataset[label_column])
+        classes = set(self.feature._str2int.values())
         if ignore_labels is not None:
-            classes -= set(self.class_str2int(ignore_labels))
+            classes -= set(self.feature.str2int(ignore_labels))
         class_labels = list(classes)
 
         self.class_indices: Dict[int, List[int]] = {}
         for idx, example in enumerate(dataset):
-            label = example[label_column]
+            for label in example[label_column_name]:
+                if label not in class_labels:
+                    continue
 
-            if label not in class_labels:
-                continue
-
-            if label not in self.class_indices:
-                self.class_indices[label] = []
-            self.class_indices[label].append(idx)
+                if label not in self.class_indices:
+                    self.class_indices[label] = []
+                self.class_indices[label].append(idx)
 
         ignored_classes = []
         min_num_examples = n_ways * k_shots + n_ways * n_queries
@@ -64,12 +63,12 @@ class NwayKshotDataset(torch.utils.data.Dataset):
 
         logger.info(
             "The following classes have an insufficient number of examples for the current setting: %s"
-            % self.class_int2str(ignored_classes)
+            % self.feature.int2str(ignored_classes)
         )
 
         logger.info(
             "Num examples: %s"
-            % {self.class_int2str(k): len(v) for k, v in self.class_indices.items()}
+            % {self.feature.int2str(k): len(v) for k, v in self.class_indices.items()}
         )
 
     def _sample_classes(self) -> np.ndarray:
@@ -77,24 +76,42 @@ class NwayKshotDataset(torch.utils.data.Dataset):
 
     def _sample_indices_and_targets(
         self, cls_sampled: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[List[int]], List[np.ndarray], List[List[int]]]:
+    ) -> Tuple[
+        List[np.ndarray],
+        List[List[int]],
+        List[List[int]],
+        List[np.ndarray],
+        List[List[int]],
+        List[List[int]],
+    ]:
         support_indices = []
         support_targets = []
+        support_targets_orig = []
         query_indices = []
         query_targets = []
+        query_targets_orig = []
         for idx, cls in enumerate(cls_sampled):
             cls_indices = np.asarray(self.class_indices[cls])
 
             support_ids = np.random.choice(range(cls_indices.shape[0]), self.k_shots, replace=False)
             support_indices.append(cls_indices[support_ids])
             support_targets.append([idx] * self.k_shots)
+            support_targets_orig.append([cls] * self.k_shots)
 
             query_ids = np.setxor1d(np.arange(cls_indices.shape[0]), support_ids)
             query_ids = np.random.choice(query_ids, self.n_queries, replace=False)
             query_indices.append(cls_indices[query_ids])
             query_targets.append([idx] * self.n_queries)
+            query_targets_orig.append([cls] * self.n_queries)
 
-        return support_indices, support_targets, query_indices, query_targets
+        return (
+            support_indices,
+            support_targets,
+            support_targets_orig,
+            query_indices,
+            query_targets,
+            query_targets_orig,
+        )
 
     def __getitem__(self, item):
         if self.deterministic:
@@ -105,20 +122,32 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         (
             support_indices,
             support_targets,
+            support_targets_orig,
             query_indices,
             query_targets,
+            query_targets_orig,
         ) = self._sample_indices_and_targets(cls_sampled)
 
         support_indices = np.concatenate(support_indices).flatten()
         support_targets = np.concatenate(support_targets).flatten()
+        support_targets_orig = np.concatenate(query_targets_orig).flatten()
+
         query_indices = np.concatenate(query_indices).flatten()
         query_targets = np.concatenate(query_targets).flatten()
+        query_targets_orig = np.concatenate(query_targets_orig).flatten()
 
         with self.dataset.formatted_as(type="numpy", columns=self.columns):
             support = self.dataset[support_indices]
             query = self.dataset[query_indices]
 
-        return support, support_targets, query, query_targets
+        return (
+            support,
+            support_targets,
+            support_targets_orig,
+            query,
+            query_targets,
+            query_targets_orig,
+        )
 
     def __len__(self):
         return self.n_samples
@@ -135,7 +164,7 @@ class NwayKshotNaDedicatedDataset(NwayKshotDataset):
         na_label: str,
         columns: Optional[List[str]] = None,
         ignore_labels: Optional[List[str]] = None,
-        label_column: str = "label",
+        label_column_name: str = "label",
         deterministic: bool = False,
     ):
         super().__init__(
@@ -146,7 +175,7 @@ class NwayKshotNaDedicatedDataset(NwayKshotDataset):
             n_samples=n_samples,
             columns=columns,
             ignore_labels=ignore_labels,
-            label_column=label_column,
+            label_column_name=label_column_name,
             deterministic=deterministic,
         )
         self.na_label_idx = self.class_str2int(na_label)

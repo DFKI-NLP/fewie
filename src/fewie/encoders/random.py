@@ -1,16 +1,12 @@
-from typing import Optional
-
 import torch
-from transformers.file_utils import ModelOutput
+
+from fewie.encoders.encoder import Encoder, EncoderOutput
 
 
-class EncoderOutput(ModelOutput):
-    embeddings: Optional[torch.FloatTensor] = None
-
-
-class Encoder(torch.nn.Module):
-    def __init__(self) -> None:
+class RandomEncoder(Encoder):
+    def __init__(self, embedding_dim: int) -> None:
         super().__init__()
+        self.embedding_dim = embedding_dim
 
     def forward(
         self,
@@ -27,4 +23,6 @@ class Encoder(torch.nn.Module):
         output_hidden_states=None,
         return_dict=None,
     ) -> EncoderOutput:
-        pass
+        shape = input_ids.shape + (self.embedding_dim,)
+        embeddings = torch.rand(shape, device=input_ids.device)
+        return EncoderOutput(embeddings=embeddings)

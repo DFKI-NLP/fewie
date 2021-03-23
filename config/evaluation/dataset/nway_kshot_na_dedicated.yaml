@@ -1,0 +1,9 @@
+# @package _group_
+
+_target_: fewie.data.datasets.generic.nway_kshot.NwayKshotNaDedicatedDataset
+n_ways: 5
+k_shots: 1
+n_queries: 1
+n_samples: 10
+deterministic: False
+na_label: ???

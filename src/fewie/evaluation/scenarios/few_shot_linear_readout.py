@@ -1,11 +1,11 @@
 from typing import Dict, List, Optional
 
-import datasets
 import numpy as np
 import scipy
 import torch
 from tqdm import tqdm
 
+import datasets
 from fewie.data.datasets.generic.nway_kshot import NwayKshotDataset
 from fewie.encoders.encoder import Encoder
 from fewie.evaluation.classifiers.classifier import Classifier
@@ -29,6 +29,44 @@ def normalize(x):
     norm = x.pow(2).sum(1, keepdim=True).pow(1.0 / 2)
     out = x.div(norm)
     return out
+
+
+def prepare_features(
+    support_features,
+    support_targets,
+    support_targets_orig,
+    support_labels,
+    query_features,
+    query_targets,
+    query_targets_orig,
+    query_labels,
+):
+    X_support = []
+    y_support = []
+    for i, (target, target_orig, labels) in enumerate(
+        zip(support_targets, support_targets_orig, support_labels)
+    ):
+        mask = labels == target_orig
+        features = support_features[i, mask, :]
+        X_support.append(features)
+        y_support.extend([target] * features.shape[0])
+
+    X_query = []
+    y_query = []
+    for i, (target, target_orig, labels) in enumerate(
+        zip(query_targets, query_targets_orig, query_labels)
+    ):
+        mask = labels == target_orig
+        features = query_features[i, mask, :]
+        X_query.append(features)
+        y_query.extend([target] * features.shape[0])
+
+    X_support = np.concatenate(X_support, axis=0)
+    y_support = np.array(y_support)
+    X_query = np.concatenate(X_query, axis=0)
+    y_query = np.array(y_query)
+
+    return X_support, y_support, X_query, y_query
 
 
 def eval_few_shot_linear_readout(
@@ -67,19 +105,37 @@ def eval_few_shot_linear_readout(
             # query: [batch_size, n_ways * n_queries, ...]
             # support_targets: [batch_size, n_ways * k_shots]
             # query_targets: [batch_size, n_ways * n_queries]
-            support, support_targets, query, query_targets = batch
+            (
+                support,
+                support_targets,
+                support_targets_orig,
+                query,
+                query_targets,
+                query_targets_orig,
+            ) = batch
+
+            batch_size, _, seq_len = support["input_ids"].shape
+
+            support_labels = support["labels"].cpu().numpy()
+            query_labels = query["labels"].cpu().numpy()
 
             support = {
-                key: tensor.to(device).view(batch_size * n_ways * k_shots, -1)
+                key: tensor.to(device).view(batch_size * n_ways * k_shots, seq_len)
                 for key, tensor in support.items()
+                if key != "labels"
             }
             query = {
-                key: tensor.to(device).view(batch_size * n_ways * n_queries, -1)
+                key: tensor.to(device).view(batch_size * n_ways * n_queries, seq_len)
                 for key, tensor in query.items()
+                if key != "labels"
             }
 
-            support_features = encoder(**support).embeddings.view(batch_size, n_ways * k_shots, -1)
-            query_features = encoder(**query).embeddings.view(batch_size, n_ways * n_queries, -1)
+            support_features = encoder(**support).embeddings.view(
+                batch_size, n_ways * k_shots, seq_len, -1
+            )  # [batch_size, n_ways * k_shots, seq_len, d_hidden]
+            query_features = encoder(**query).embeddings.view(
+                batch_size, n_ways * n_queries, seq_len, -1
+            )  # [batch_size, n_ways * n_queries, seq_len, d_hidden]
 
             if normalize_embeddings:
                 support_features = normalize(support_features)
@@ -91,12 +147,20 @@ def eval_few_shot_linear_readout(
             support_targets = support_targets.numpy()
             query_targets = query_targets.numpy()
 
-            for batch_idx in range(support_features.shape[0]):
-                X_support = support_features[batch_idx]
-                X_query = query_features[batch_idx]
+            support_targets_orig = support_targets_orig.numpy()
+            query_targets_orig = query_targets_orig.numpy()
 
-                y_support = support_targets[batch_idx]
-                y_query = query_targets[batch_idx]
+            for batch_idx in range(support_features.shape[0]):
+                X_support, y_support, X_query, y_query = prepare_features(
+                    support_features[batch_idx],
+                    support_targets[batch_idx],
+                    support_targets_orig[batch_idx],
+                    support_labels[batch_idx],
+                    query_features[batch_idx],
+                    query_targets[batch_idx],
+                    query_targets_orig[batch_idx],
+                    query_labels[batch_idx],
+                )
 
                 pred_query = classifier(X_support, y_support, X_query)
 

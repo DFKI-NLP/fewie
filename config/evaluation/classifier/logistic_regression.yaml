@@ -1,0 +1,9 @@
+# @package _group_
+
+_target_: fewie.evaluation.classifiers.logistic_regression.LogisticRegression
+C: 1.0
+penalty: l2
+random_state: 0
+solver: lbfgs
+max_iter: 1000
+multi_class: multinomial

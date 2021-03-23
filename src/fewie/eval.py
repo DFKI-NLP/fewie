@@ -4,6 +4,8 @@ import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig
 
+import datasets
+from fewie.data.datasets.utils import get_label_to_id
 from fewie.evaluation.scenarios.few_shot_linear_readout import eval_few_shot_linear_readout
 from fewie.evaluation.utils import seed_everything
 
@@ -15,7 +17,17 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
 
     dataset = instantiate(cfg.dataset)
 
-    dataset_processor = instantiate(cfg.dataset_processor)
+    if isinstance(dataset, datasets.DatasetDict):
+        label_to_id = get_label_to_id(dataset["train"].features, cfg.label_column_name)
+    else:
+        label_to_id = get_label_to_id(dataset.features, cfg.label_column_name)
+
+    dataset_processor = instantiate(
+        cfg.dataset_processor,
+        label_to_id=label_to_id,
+        text_column_name=cfg.text_column_name,
+        label_column_name=cfg.label_column_name,
+    )
 
     encoder = instantiate(cfg.encoder)
     encoder = encoder.to(device)
@@ -29,6 +41,7 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
             cfg.evaluation.dataset,
             dataset=processed_dataset,
             columns=dataset_processor.feature_columns,
+            label_column_name=cfg.label_column_name,
         )
 
         evaluation_results = eval_few_shot_linear_readout(

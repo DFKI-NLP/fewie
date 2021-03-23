@@ -1,0 +1,4 @@
+# @package _group_
+
+_target_: fewie.encoders.random.RandomEncoder
+embedding_dim: 768

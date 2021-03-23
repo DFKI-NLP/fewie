@@ -39,6 +39,7 @@ class TransformerProcessor(DatasetProcessor):
         tokenized_inputs = self.tokenizer(
             examples[self.text_column_name],
             padding=self.padding,
+            max_length=self.max_length,
             truncation=True,
             # We use this argument because the texts in our dataset are lists of words (with a label for each word).
             is_split_into_words=True,
