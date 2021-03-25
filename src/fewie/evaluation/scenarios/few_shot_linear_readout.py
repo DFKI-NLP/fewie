@@ -120,12 +120,12 @@ def eval_few_shot_linear_readout(
             query_labels = query["labels"].cpu().numpy()
 
             support = {
-                key: tensor.to(device).view(batch_size * n_ways * k_shots, seq_len)
+                key: tensor.to(device).view(batch_size * n_ways * k_shots, seq_len).long()
                 for key, tensor in support.items()
                 if key != "labels"
             }
             query = {
-                key: tensor.to(device).view(batch_size * n_ways * n_queries, seq_len)
+                key: tensor.to(device).view(batch_size * n_ways * n_queries, seq_len).long()
                 for key, tensor in query.items()
                 if key != "labels"
             }
