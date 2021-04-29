@@ -27,7 +27,7 @@ WORKDIR /app/fewie
 
 # Install packages and skip some that are already included
 COPY * ./
-RUN pip3 install -e .
+RUN pip3 install .
 
 VOLUME ["/app/fewie/"]
 
