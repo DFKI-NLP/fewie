@@ -56,3 +56,6 @@ MANIFEST
 datasets/*
 
 !datasets/.gitkeep
+
+# Manually added
+usrun.sh
