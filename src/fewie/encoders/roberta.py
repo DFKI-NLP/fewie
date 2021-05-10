@@ -23,7 +23,6 @@ class RobertaEncoder(Encoder):
         output_attentions=None,
         output_hidden_states=None,
         return_dict=None,
-        add_prefix_space=True
     ) -> EncoderOutput:
 
         output = self.model(
@@ -38,7 +37,6 @@ class RobertaEncoder(Encoder):
             output_attentions=False,
             output_hidden_states=False,
             return_dict=True,
-            add_prefix_space=True
         )
 
         return EncoderOutput(embeddings=output.last_hidden_state)
