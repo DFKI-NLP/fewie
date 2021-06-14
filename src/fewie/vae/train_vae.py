@@ -25,8 +25,8 @@ from fewie.vae.model.vae import VAE
 #device = 'cuda' if torch.cuda.is_available() else 'cpu'
 #device='cpu'
 def pretrain_vae(dataset, dims, epochs: int,batch_size:int,model_name: str, reuse: bool=False):
-    device='cuda' if torch.cuda.is_available() else 'cpu'
-    _model=VAE(dims)
+    device='cuda'# if torch.cuda.is_available() else 'cpu'
+    _model=VAE(dims,device)
     model=_model.to(device)
     if os.path.exists('model/pretrained/'+model_name+'.pth'):
         print('model already exists, using pretrained...')

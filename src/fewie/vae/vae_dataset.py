@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from torch.utils.data import Dataset
 class VaeDataset(Dataset):
-    def __init__(self, dataset, target_name,sentence_length, transform=None)#, target_transform=None):
+    def __init__(self, dataset, target_name,sentence_length, transform=None):#, target_transform=None):
         self.dataset=dataset
         self.target_name=target_name
         self.sentence_length=sentence_length

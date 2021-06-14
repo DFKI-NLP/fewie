@@ -6,9 +6,9 @@ from fewie.vae.model.encoders.simple import *
 from fewie.vae.model.decoders.simple import*
 
 class VAE(nn.Module):
-    def __init__(self, dims):
+    def __init__(self, dims, device):
         super(VAE, self).__init__()
-        self.encoder = Encoder(dims)
+        self.encoder = Encoder(dims, device)
         self.decoder = Decoder(dims)
         self.float()
     def forward(self, x):

@@ -31,9 +31,10 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
     #print('max padded shape:',max_padded_matrix.shape)
     #limited_matrix=max_padded_matrix[:, :30]#limit of 30 words is set arbitrarily
     #print('final matrix shape:',limited_matrix.shape)
-    transformations=transforms.Compose([
-        transforms.ToTensor()
-        ])
+    #transformations=transforms.Compose([
+    #    transforms.ToTensor()
+    #    ])
+    transformations=[]
     dataset=VaeDataset(dataset, 'pos_tags', 30, transformations)#, transformations])
     model=pretrain_vae(dataset, dims=[30,20,10], epochs=1,batch_size=16, model_name='test')
     return  

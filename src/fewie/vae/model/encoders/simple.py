@@ -1,17 +1,17 @@
 import torch
 import torch.nn as nn
 class Encoder(nn.Module):
-    def __init__(self, dims):
+    def __init__(self, dims, device):
         super(Encoder, self).__init__()
         self.fc1 = nn.Linear(dims[0], dims[1])
         self.fc_mu = nn.Linear(dims[1], dims[2])
         self.fc_sig = nn.Linear(dims[1], dims[2])
         self.ReLU=nn.ReLU()
         self.float() 
-        # this trick is taken from https://avandekleut.github.io/vae/
+        
         self.normal = torch.distributions.Normal(0, 1)
-        self.normal.loc = self.normal.loc.cuda( )#TODO:remove gpu dependency
-        self.normal.scale = self.normal.scale.cuda()#TODO:remove gpu dependency
+        self.normal.loc = self.normal.loc.to(device)
+        self.normal.scale = self.normal.scale.to(device)
 
 
         self.kl_div = 0
@@ -24,7 +24,8 @@ class Encoder(nn.Module):
         #x=x.double()
         #x2=x.double()
         #print('tensor type sanity:', x.dtype, x.double().dtype, x2.dtype)
-        x= self.ReLU(self.fc1(x.double()))
+        x=self.fc1(x.float())
+        x= self.ReLU(x)#x.double()))
         #print('post relu:',list(x.size()))
         mu=self.fc_mu(x)
         sigma=torch.exp(self.fc_sig(x))
