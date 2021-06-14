@@ -8,7 +8,7 @@ torch.manual_seed(0)
 #torch.use_deterministic_algorithms(True) # forcing greatest possible level of reproducibility
 torch.backends.cudnn.deterministic = True
 
-
+import os
 import torch.nn as nn
 import torch.nn.functional
 import torch.utils
@@ -24,8 +24,8 @@ from fewie.vae.model.vae import VAE
 #print('imports working')
 #device = 'cuda' if torch.cuda.is_available() else 'cpu'
 #device='cpu'
-def pretrain_vae(data, dims, epochs: int,model_name: str, reuse: bool=False):
-    device='cude' if torch.cuda.is_available() else 'cpu'
+def pretrain_vae(dataset, dims, epochs: int,batch_size:int,model_name: str, reuse: bool=False):
+    device='cuda' if torch.cuda.is_available() else 'cpu'
     _model=VAE(dims)
     model=_model.to(device)
     if os.path.exists('model/pretrained/'+model_name+'.pth'):
@@ -34,7 +34,7 @@ def pretrain_vae(data, dims, epochs: int,model_name: str, reuse: bool=False):
         return model.eval()
 
     else:
-        model=train(model, data,device,epochs)
+        model=train(model, dataset,device,batch_size,epochs)
         print('model pretrained, creating backup...')
         torch.save(model.state_dict(), 'model/pretrained/'+model_name+'.pth')
         return model.eval()

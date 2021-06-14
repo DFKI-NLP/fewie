@@ -10,6 +10,7 @@ class VAE(nn.Module):
         super(VAE, self).__init__()
         self.encoder = Encoder(dims)
         self.decoder = Decoder(dims)
+        self.float()
     def forward(self, x):
         z=self.encoder(x)
         y=self.decoder(z)
