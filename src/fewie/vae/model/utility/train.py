@@ -18,10 +18,12 @@ def train(model, data,device,batch_size, epochs=1):
             prediction=model(x)
             loss=mse(prediction, x).float()+model.encoder.kl_div
             #print('loss types, mse:', mse(prediction, x).type(), 'kl_div:', model.encoder.kl_div.type())
-            print('other loss type:', loss.type())
+            #print('other loss type:', loss.type())
             losses.append(loss.item())
             loss.backward()
             adam.step()
         if epoch%sampling_interval==0:
-            print('Training Epoch: {}/{}, Loss is: {.0f}%)'.format( epoch, len(data), np.mean(losses)))
+            loss_mean=np.mean(losses)
+            print('Training Epoch:',epoch,'/',epochs, ', Loss is:', loss_mean)
+            #print('Training Epoch: {}/{}, Loss is: {.0f}%)'.format( epoch, len(data), np.mean(losses)))
     return model

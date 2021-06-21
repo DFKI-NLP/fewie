@@ -15,3 +15,7 @@ class VAE(nn.Module):
         z=self.encoder(x)
         y=self.decoder(z)
         return y
+    def predict_latent(self, x):
+        return self.encoder(x)
+    def use_latent(self,z):
+        return self.decoder(z)

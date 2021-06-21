@@ -24,8 +24,8 @@ from fewie.vae.model.vae import VAE
 #print('imports working')
 #device = 'cuda' if torch.cuda.is_available() else 'cpu'
 #device='cpu'
-def pretrain_vae(dataset, dims, epochs: int,batch_size:int,model_name: str, reuse: bool=False):
-    device='cuda'# if torch.cuda.is_available() else 'cpu'
+def pretrain_vae(dataset, dims, epochs: int,batch_size:int,model_name: str,device: str='cpu', reuse: bool=False):
+    #device='cuda'# if torch.cuda.is_available() else 'cpu'
     _model=VAE(dims,device)
     model=_model.to(device)
     if os.path.exists('model/pretrained/'+model_name+'.pth'):
@@ -36,6 +36,7 @@ def pretrain_vae(dataset, dims, epochs: int,batch_size:int,model_name: str, reus
     else:
         model=train(model, dataset,device,batch_size,epochs)
         print('model pretrained, creating backup...')
+        os.makedirs('model/pretrained', exist_ok=True)
         torch.save(model.state_dict(), 'model/pretrained/'+model_name+'.pth')
         return model.eval()
 

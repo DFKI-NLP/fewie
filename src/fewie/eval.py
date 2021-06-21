@@ -35,8 +35,11 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
     #    transforms.ToTensor()
     #    ])
     transformations=[]
+    print('preparing dataset...')
     dataset=VaeDataset(dataset, 'pos_tags', 30, transformations)#, transformations])
-    model=pretrain_vae(dataset, dims=[30,20,10], epochs=1,batch_size=16, model_name='test')
+    print('starting training...')
+    model=pretrain_vae(dataset, dims=[30,20,10], epochs=1,batch_size=128, model_name='test',device=device)
+    print('done, returning')
     return  
    
 
