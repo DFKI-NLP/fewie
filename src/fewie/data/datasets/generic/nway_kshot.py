@@ -38,7 +38,7 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         if ignore_labels is not None:
             classes -= set(self.feature.str2int(ignore_labels))
         class_labels = list(classes)
-
+        # for each class we have a list of sentence-id where it occurs and how often
         self.class_indices: Dict[int, List[int]] = {}
         for idx, example in enumerate(dataset):
             for label in example[label_column_name]:
@@ -93,8 +93,11 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         for idx, cls in enumerate(cls_sampled):
             cls_indices = np.asarray(self.class_indices[cls])
 
-            support_ids = np.random.choice(range(cls_indices.shape[0]), self.k_shots, replace=False)
+            support_ids = np.random.choice(
+                range(cls_indices.shape[0]), self.k_shots, replace=False
+            )
             support_indices.append(cls_indices[support_ids])
+            # idx serves as class-encoding and helps if the samples classes are not sequential from 0
             support_targets.append([idx] * self.k_shots)
             support_targets_orig.append([cls] * self.k_shots)
 
@@ -130,7 +133,7 @@ class NwayKshotDataset(torch.utils.data.Dataset):
 
         support_indices = np.concatenate(support_indices).flatten()
         support_targets = np.concatenate(support_targets).flatten()
-        support_targets_orig = np.concatenate(query_targets_orig).flatten()
+        support_targets_orig = np.concatenate(support_targets_orig).flatten()
 
         query_indices = np.concatenate(query_indices).flatten()
         query_targets = np.concatenate(query_targets).flatten()
@@ -201,7 +204,9 @@ class NwayKshotNaRestDataset(NwayKshotDataset):
         for idx, cls in enumerate(cls_sampled):
             cls_indices = np.asarray(self.class_indices[cls])
 
-            support_ids = np.random.choice(range(cls_indices.shape[0]), self.k_shots, replace=False)
+            support_ids = np.random.choice(
+                range(cls_indices.shape[0]), self.k_shots, replace=False
+            )
             support_indices.append(cls_indices[support_ids])
             support_targets.append([idx] * self.k_shots)
 
@@ -224,7 +229,9 @@ class NwayKshotNaRestDataset(NwayKshotDataset):
         ):
             cls_indices = np.asarray(self.class_indices[cls])
 
-            support_ids = np.random.choice(range(cls_indices.shape[0]), count, replace=False)
+            support_ids = np.random.choice(
+                range(cls_indices.shape[0]), count, replace=False
+            )
             other_support_indices.extend(cls_indices[support_ids])
             other_support_targets.extend([self.n_ways] * count)
 
@@ -235,11 +242,13 @@ class NwayKshotNaRestDataset(NwayKshotDataset):
         other_query_indices = []
         other_query_targets = []
         for cls, count in zip(
-            *np.unique(other_classes_sampled[self.k_shots :], return_counts=True)
+            *np.unique(other_classes_sampled[self.k_shots:], return_counts=True)
         ):
             cls_indices = np.asarray(self.class_indices[cls])
 
-            support_ids = np.random.choice(range(cls_indices.shape[0]), count, replace=False)
+            support_ids = np.random.choice(
+                range(cls_indices.shape[0]), count, replace=False
+            )
             other_query_indices.extend(cls_indices[support_ids])
             other_query_targets.extend([self.n_ways] * count)
 
@@ -247,3 +256,127 @@ class NwayKshotNaRestDataset(NwayKshotDataset):
         query_targets.append(other_query_targets)
 
         return support_indices, support_targets, query_indices, query_targets
+
+
+class ContrastiveNwayKshotDataset(NwayKshotDataset):
+    def _sample_indices_and_targets(
+        self, cls_sampled: np.ndarray
+    ) -> Tuple[
+        List[np.ndarray],
+        List[List[int]],
+        List[List[int]],
+        List[np.ndarray],
+        List[List[int]],
+        List[List[int]],
+        List[np.ndarray],
+        List[List[int]],
+        List[List[int]],
+    ]:
+        contrastive_indices, contrastive_targets, contrastive_targets_orig = [], [], []
+        support_indices, support_targets, support_targets_orig = [], [], []
+        query_indices, query_targets, query_targets_orig = [], [], []
+
+        for idx, cls in enumerate(cls_sampled):
+            cls_indices = np.asarray(self.class_indices[cls])
+
+            # build positive pairs
+            positive_ids_pool = np.random.choice(
+                range(cls_indices.shape[0]), max(self.k_shots, 2), replace=False
+            )
+            positive_ids = np.random.choice(positive_ids_pool, 2)
+            contrastive_indices.append(cls_indices[positive_ids])
+            contrastive_targets.append([0])
+            contrastive_targets_orig.append([cls, cls])
+
+            # sample support and query set as base class does
+            support_ids = positive_ids_pool[:self.k_shots]
+            support_indices.append(cls_indices[support_ids])
+            support_targets.append([idx] * self.k_shots)
+            support_targets_orig.append([cls] * self.k_shots)
+
+            query_ids = np.setxor1d(np.arange(cls_indices.shape[0]), support_ids)
+            query_ids = np.random.choice(query_ids, self.n_queries, replace=False)
+            query_indices.append(cls_indices[query_ids])
+            query_targets.append([idx] * self.n_queries)
+            query_targets_orig.append([cls] * self.n_queries)
+
+        # build negative pairs
+        for idx, cls in enumerate(cls_sampled):
+            negative_pool = self.class_indices.copy()
+            negative_pool.pop(cls)
+            negative_pool = [
+                (cls, index)
+                for cls in negative_pool.keys()
+                for index in negative_pool[cls]
+            ]
+            negative_ids = np.random.choice(
+                range(len(negative_pool)), self.k_shots, replace=False
+            )
+            for negative_id in negative_ids:
+                contrastive_indices.append(
+                    [contrastive_indices[idx][0], negative_pool[negative_id][1]]
+                )
+                contrastive_targets.append([1])
+                contrastive_targets_orig.append([cls, negative_pool[negative_id][0]])
+
+        return (
+            contrastive_indices,
+            contrastive_targets,
+            contrastive_targets_orig,
+            support_indices,
+            support_targets,
+            support_targets_orig,
+            query_indices,
+            query_targets,
+            query_targets_orig,
+        )
+
+    def __getitem__(self, item):
+        if self.deterministic:
+            np.random.seed(item)
+
+        cls_sampled = self._sample_classes()
+
+        (
+            contrastive_indices,
+            contrastive_targets,
+            contrastive_targets_orig,
+            support_indices,
+            support_targets,
+            support_targets_orig,
+            query_indices,
+            query_targets,
+            query_targets_orig,
+        ) = self._sample_indices_and_targets(cls_sampled)
+
+        contrastive_left_indices = [contrastive_pair[0] for contrastive_pair in contrastive_indices]
+        contrastive_right_indices = [contrastive_pair[1] for contrastive_pair in contrastive_indices]
+        contrastive_targets = np.concatenate(contrastive_targets).flatten()
+        contrastive_targets_orig = np.array(contrastive_targets_orig)
+
+        support_indices = np.concatenate(support_indices).flatten()
+        support_targets = np.concatenate(support_targets).flatten()
+        support_targets_orig = np.concatenate(support_targets_orig).flatten()
+
+        query_indices = np.concatenate(query_indices).flatten()
+        query_targets = np.concatenate(query_targets).flatten()
+        query_targets_orig = np.concatenate(query_targets_orig).flatten()
+
+        with self.dataset.formatted_as(type="numpy", columns=self.columns):
+            contrastive_left = self.dataset[contrastive_left_indices]
+            contrastive_right = self.dataset[contrastive_right_indices]
+            support = self.dataset[support_indices]
+            query = self.dataset[query_indices]
+
+        contrastive = (contrastive_left, contrastive_right)
+        return (
+            contrastive,
+            contrastive_targets,
+            contrastive_targets_orig,
+            support,
+            support_targets,
+            support_targets_orig,
+            query,
+            query_targets,
+            query_targets_orig,
+        )

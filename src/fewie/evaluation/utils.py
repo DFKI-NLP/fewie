@@ -4,6 +4,13 @@ from functools import partial
 import numpy
 import torch
 from sklearn import metrics
+import logging
+
+
+def normalize(x):
+    norm = x.pow(2).sum(1, keepdim=True).pow(1.0 / 2)
+    out = x.div(norm)
+    return out
 
 
 def seed_everything(seed: int) -> None:
@@ -21,3 +28,33 @@ def get_metric(metric: str):
         "f1_micro": partial(metrics.f1_score, average="micro"),
         "f1_macro": partial(metrics.f1_score, average="macro"),
     }[metric]
+
+
+def hinge_contrastive_loss(
+        contrastive_embedding: torch.Tensor,
+        contrastive_targets: torch.Tensor,
+        p: float = 2,
+        margin: float = 4
+):
+    embedding_left = normalize(torch.squeeze(contrastive_embedding[:, 0, :]))
+    embedding_right = normalize(torch.squeeze(contrastive_embedding[:, 1, :]))
+
+    pdist = torch.nn.PairwiseDistance(p=p, eps=1e-06, keepdim=False)
+    dist_similar = pdist(embedding_left, embedding_right)
+    dist_dissimilar = torch.clamp(margin - dist_similar, min=0)
+
+    loss = (1 - contrastive_targets) * dist_similar + contrastive_targets * dist_dissimilar
+    return torch.mean(loss)
+
+
+def batch_where_equal(labels, targets_orig):
+    labels, targets_orig = torch.squeeze(labels), torch.squeeze(targets_orig)
+    batch_size = labels.shape[0]
+    pos = []
+    for text_id in range(batch_size):
+        pos_pool = (labels[text_id, :] == targets_orig[text_id]).nonzero().flatten()
+        perm = torch.randperm(pos_pool.shape[0])[0]
+        pos.append(pos_pool[perm].item())
+
+    pos = torch.Tensor(pos).type(torch.LongTensor)
+    return pos

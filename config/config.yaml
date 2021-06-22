@@ -4,7 +4,7 @@ batch_size: 1
 text_column_name: tokens
 label_column_name: ner_tags
 scenario:
-  name: few_shot_linear_readout
+  name: few_shot_contrastive_pretraining
   metrics:
     - accuracy
     - f1_micro
@@ -12,7 +12,7 @@ scenario:
 
 defaults:
   - dataset: conll2003
-  - dataset_processor: transformer
-  - encoder: random
-  - evaluation/dataset: nway_kshot
+  - dataset_processor: xlnet
+  - encoder: contrastive
+  - evaluation/dataset: contrastive_nway_kshot
   - evaluation/classifier: logistic_regression
