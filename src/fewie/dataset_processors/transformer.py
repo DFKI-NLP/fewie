@@ -12,6 +12,7 @@ class TransformerProcessor(DatasetProcessor):
     Return the dataset with each token tokenized with bert-vocab (`input_ids`) and
     padded length (`attention mask`, `labels`, `token_type_ids` as well as `input_ids`).
     """
+
     def __init__(
         self,
         tokenizer_name_or_path: str = "bert-base-uncased",

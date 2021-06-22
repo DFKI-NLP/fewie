@@ -17,7 +17,6 @@ class ContrastiveTransformerEncoder(torch.nn.Module):
         pos_left,
         pos_right,
     ):
-
         embedding_left = self.model(
             **contrastive_left,
             output_attentions=False,

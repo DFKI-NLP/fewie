@@ -24,7 +24,6 @@ class TransformerEncoder(Encoder):
         output_hidden_states=None,
         return_dict=None,
     ) -> EncoderOutput:
-
         output = self.model(
             input_ids=input_ids,
             attention_mask=attention_mask,

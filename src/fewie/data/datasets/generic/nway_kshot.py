@@ -6,7 +6,6 @@ import torch
 
 import datasets
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -242,7 +241,7 @@ class NwayKshotNaRestDataset(NwayKshotDataset):
         other_query_indices = []
         other_query_targets = []
         for cls, count in zip(
-            *np.unique(other_classes_sampled[self.k_shots:], return_counts=True)
+            *np.unique(other_classes_sampled[self.k_shots :], return_counts=True)
         ):
             cls_indices = np.asarray(self.class_indices[cls])
 
@@ -289,7 +288,7 @@ class ContrastiveNwayKshotDataset(NwayKshotDataset):
             contrastive_targets_orig.append([cls, cls])
 
             # sample support and query set as base class does
-            support_ids = positive_ids_pool[:self.k_shots]
+            support_ids = positive_ids_pool[: self.k_shots]
             support_indices.append(cls_indices[support_ids])
             support_targets.append([idx] * self.k_shots)
             support_targets_orig.append([cls] * self.k_shots)
@@ -349,8 +348,12 @@ class ContrastiveNwayKshotDataset(NwayKshotDataset):
             query_targets_orig,
         ) = self._sample_indices_and_targets(cls_sampled)
 
-        contrastive_left_indices = [contrastive_pair[0] for contrastive_pair in contrastive_indices]
-        contrastive_right_indices = [contrastive_pair[1] for contrastive_pair in contrastive_indices]
+        contrastive_left_indices = [
+            contrastive_pair[0] for contrastive_pair in contrastive_indices
+        ]
+        contrastive_right_indices = [
+            contrastive_pair[1] for contrastive_pair in contrastive_indices
+        ]
         contrastive_targets = np.concatenate(contrastive_targets).flatten()
         contrastive_targets_orig = np.array(contrastive_targets_orig)
 

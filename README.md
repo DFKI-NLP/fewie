@@ -7,6 +7,7 @@
 Install [PyTorch](https://pytorch.org/get-started).
 
 ### From source
+
 ```bash
 git clone https://github.com/ChristophAlt/fewie
 cd fewie
@@ -14,6 +15,7 @@ pip install .
 ```
 
 ### For development
+
 ```bash
 git clone https://github.com/ChristophAlt/fewie
 cd fewie
@@ -23,16 +25,21 @@ pip install -e .
 ## 💡&nbsp; Usage
 
 To run the default experiment setting, run:
+
 ```python
-python evaluate.py
+python
+evaluate.py
 ```
 
 To show the available options and the default config, do:
+
 ```python
-python evaluate.py --help
+python
+evaluate.py - -help
 ```
 
 which results in something like this:
+
 ```
 == Configuration groups ==
 Compose your configuration from those groups (group=option)
@@ -90,6 +97,7 @@ scenario:
 ```
 
 For example to run the evaluation on CoNLL 2003 with a baseline BERT encoder, run the following command:
+
 ```sh
 python evaluate.py \
     dataset=conll2003 \
@@ -99,16 +107,29 @@ python evaluate.py \
 ```
 
 This should produce an output similar to this:
+
 ```json
-{'accuracy': {
-    'mean': 0.5341624247825408, 'margin_of_error': 0.019547702016139496, 'confidence': 0.95
-    }, 
-    'f1_micro': {'mean': 0.5341624247825408, 'margin_of_error': 0.019547702016139496, 'confidence': 0.95
-    }, 
-    'f1_macro': {'mean': 0.23580803312291498, 'margin_of_error': 0.010821995530256272, 'confidence': 0.95}}
+{
+  'accuracy': {
+    'mean': 0.5341624247825408,
+    'margin_of_error': 0.019547702016139496,
+    'confidence': 0.95
+  },
+  'f1_micro': {
+    'mean': 0.5341624247825408,
+    'margin_of_error': 0.019547702016139496,
+    'confidence': 0.95
+  },
+  'f1_macro': {
+    'mean': 0.23580803312291498,
+    'margin_of_error': 0.010821995530256272,
+    'confidence': 0.95
+  }
+}
 ```
 
 # Usage on GPU cluster with usrun.sh
+
 ```
 ./usrun.sh -p <profile> --gpus=<n> container-env-fewie.sh \
     python evaluate.py \
@@ -119,7 +140,11 @@ This should produce an output similar to this:
 ```
 
 # TODOs
-- [x] Clarify the best approach to produce prototypes given token embeddings. Input -> Encoder -> embeddings [N x K x d_hidden] -> Pooling (select and aggregate token embeddings for each N) -> Prototypes [N x d_hidden]
-    - Solution 1: Encoder with a forward and pooling step that produces the prototypes (if mask, or labels plus label id, are provided) and returns prototypes [N x d_hidden] (optional) and final hidden states [N x K x d_hidden].
+
+- [x] Clarify the best approach to produce prototypes given token embeddings. Input -> Encoder ->
+  embeddings [N x K x d_hidden] -> Pooling (select and aggregate token embeddings for each N) ->
+  Prototypes [N x d_hidden]
+    - Solution 1: Encoder with a forward and pooling step that produces the prototypes (if mask, or labels plus label
+      id, are provided) and returns prototypes [N x d_hidden] (optional) and final hidden states [N x K x d_hidden].
 - [x] Clarify the evaluation setting, as the survey paper is missing a lot of important details.
 - In the evaluation scenario, rename ``classifier`` to ``pooling`` to better describe its purpose.

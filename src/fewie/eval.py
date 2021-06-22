@@ -10,7 +10,7 @@ from fewie.evaluation.scenarios.few_shot_linear_readout import (
     eval_few_shot_linear_readout,
 )
 from fewie.evaluation.scenarios.few_shot_contrastive_pretraining import (
-    eval_few_show_contrastive_pretraining
+    eval_few_show_contrastive_pretraining,
 )
 from fewie.evaluation.utils import seed_everything
 

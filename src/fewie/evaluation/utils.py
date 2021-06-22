@@ -31,10 +31,10 @@ def get_metric(metric: str):
 
 
 def hinge_contrastive_loss(
-        contrastive_embedding: torch.Tensor,
-        contrastive_targets: torch.Tensor,
-        p: float = 2,
-        margin: float = 4
+    contrastive_embedding: torch.Tensor,
+    contrastive_targets: torch.Tensor,
+    p: float = 2,
+    margin: float = 4,
 ):
     embedding_left = normalize(torch.squeeze(contrastive_embedding[:, 0, :]))
     embedding_right = normalize(torch.squeeze(contrastive_embedding[:, 1, :]))
@@ -43,7 +43,9 @@ def hinge_contrastive_loss(
     dist_similar = pdist(embedding_left, embedding_right)
     dist_dissimilar = torch.clamp(margin - dist_similar, min=0)
 
-    loss = (1 - contrastive_targets) * dist_similar + contrastive_targets * dist_dissimilar
+    loss = (
+        1 - contrastive_targets
+    ) * dist_similar + contrastive_targets * dist_dissimilar
     return torch.mean(loss)
 
 

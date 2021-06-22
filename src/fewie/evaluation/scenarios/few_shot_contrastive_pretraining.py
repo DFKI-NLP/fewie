@@ -18,17 +18,17 @@ import logging
 
 
 def eval_few_show_contrastive_pretraining(
-        dataset: datasets.Dataset,
-        contrastive_few_shot_dataset: ContrastiveNwayKshotDataset,
-        encoder: Encoder,
-        classifier: Classifier,
-        batch_size: int,
-        weight_decay: float,
-        learning_rate: float,
-        device: torch.device,
-        normalize_embeddings: bool = True,
-        confidence: float = 0.95,
-        metrics: Optional[List[str]] = None,
+    dataset: datasets.Dataset,
+    contrastive_few_shot_dataset: ContrastiveNwayKshotDataset,
+    encoder: Encoder,
+    classifier: Classifier,
+    batch_size: int,
+    weight_decay: float,
+    learning_rate: float,
+    device: torch.device,
+    normalize_embeddings: bool = True,
+    confidence: float = 0.95,
+    metrics: Optional[List[str]] = None,
 ):
     if metrics is None:
         metrics = ["accuracy"]
@@ -36,8 +36,7 @@ def eval_few_show_contrastive_pretraining(
     metric_scores: Dict[str, List[float]] = {metric: [] for metric in metrics}
 
     dataloader = torch.utils.data.DataLoader(
-        contrastive_few_shot_dataset,
-        batch_size=batch_size
+        contrastive_few_shot_dataset, batch_size=batch_size
     )
     n_ways = contrastive_few_shot_dataset.n_ways
     k_shots = contrastive_few_shot_dataset.k_shots
@@ -46,9 +45,9 @@ def eval_few_show_contrastive_pretraining(
     for batch in tqdm(dataloader):
         # set model (a pretrained model)
         model = deepcopy(encoder).to(device)
-        optimizer = torch.optim.Adam(params=model.parameters(),
-                                     lr=learning_rate,
-                                     weight_decay=weight_decay)
+        optimizer = torch.optim.Adam(
+            params=model.parameters(), lr=learning_rate, weight_decay=weight_decay
+        )
 
         # load data
         # contrastive: a tuple (contrastive_left, contrastive_right), each of shape:
@@ -75,28 +74,34 @@ def eval_few_show_contrastive_pretraining(
         contrastive_left, contrastive_right = contrastive
         contrastive_left = {
             key: tensor.to(device)
-                .view(batch_size * n_ways * (k_shots + 1), seq_len)
-                .long()
+            .view(batch_size * n_ways * (k_shots + 1), seq_len)
+            .long()
             for key, tensor in contrastive_left.items()
         }
         contrastive_right = {
             key: tensor.to(device)
-                .view(batch_size * n_ways * (k_shots + 1), seq_len)
-                .long()
+            .view(batch_size * n_ways * (k_shots + 1), seq_len)
+            .long()
             for key, tensor in contrastive_right.items()
         }
         contrastive_targets = contrastive_targets.to(device)
         targets_orig_left = torch.squeeze(contrastive_targets_orig)[:, 0]
         targets_orig_right = torch.squeeze(contrastive_targets_orig)[:, 1]
-        pos_left = batch_where_equal(contrastive_left['labels'], targets_orig_left).to(device)
-        pos_right = batch_where_equal(contrastive_right['labels'], targets_orig_right).to(device)
+        pos_left = batch_where_equal(contrastive_left["labels"], targets_orig_left).to(
+            device
+        )
+        pos_right = batch_where_equal(
+            contrastive_right["labels"], targets_orig_right
+        ).to(device)
 
-        contrastive_left.pop('labels')
-        contrastive_right.pop('labels')
+        contrastive_left.pop("labels")
+        contrastive_right.pop("labels")
 
         # start training
         model.train()
-        contrastive_embedding = model(contrastive_left, contrastive_right, pos_left, pos_right)
+        contrastive_embedding = model(
+            contrastive_left, contrastive_right, pos_left, pos_right
+        )
         loss = hinge_contrastive_loss(contrastive_embedding, contrastive_targets)
         optimizer.zero_grad()
         loss.backward()
@@ -109,16 +114,16 @@ def eval_few_show_contrastive_pretraining(
             query_labels = query["labels"].cpu().numpy()
 
             support = {
-                key: tensor.to(device).view(
-                    batch_size * n_ways * k_shots, seq_len
-                ).long()
+                key: tensor.to(device)
+                .view(batch_size * n_ways * k_shots, seq_len)
+                .long()
                 for key, tensor in support.items()
                 if key != "labels"
             }
             query = {
-                key: tensor.to(device).view(
-                    batch_size * n_ways * n_queries, seq_len
-                ).long()
+                key: tensor.to(device)
+                .view(batch_size * n_ways * n_queries, seq_len)
+                .long()
                 for key, tensor in query.items()
                 if key != "labels"
             }
@@ -171,4 +176,3 @@ def eval_few_show_contrastive_pretraining(
             "confidence": confidence,
         }
     return results
-
