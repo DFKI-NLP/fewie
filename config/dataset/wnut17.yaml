@@ -1,0 +1,6 @@
+# @package _group_
+
+_target_: datasets.load_dataset
+path: wnut_17
+version: 1.0.0
+split: test  # or 'train', 'validation'
