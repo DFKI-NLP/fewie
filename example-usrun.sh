@@ -1,6 +1,7 @@
 #!/bin/sh
+username="$USER"
 IMAGE=/netscratch/enroot/nvcr.io_nvidia_pytorch_21.02-py3.sqsh
-WORKDIR=/netscratch/hennig/code/fewie
+WORKDIR=/netscratch/$username/code/fewie
 
 srun -K \
   --container-mounts=/netscratch:/netscratch,/ds:/ds,$HOME:$HOME \
