@@ -12,7 +12,7 @@ scenario:
 
 defaults:
   - dataset: conll2003
-  - dataset_processor: bert
-  - encoder: bert
-  - evaluation/dataset: nway_kshot
+  - dataset_processor: 
+  - encoder: random
+  - evaluation/dataset: nway_kshot_5_10
   - evaluation/classifier: logistic_regression
