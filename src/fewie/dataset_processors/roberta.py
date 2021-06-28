@@ -30,7 +30,7 @@ class RobertaProcessor(DatasetProcessor):
 
     @property
     def feature_columns(self) -> List[str]:
-        return ["input_ids", "token_type_ids", "attention_mask", "labels"]
+        return ["input_ids", "attention_mask", "labels"]
 
     def __call__(
         self, dataset: Union[datasets.Dataset, datasets.DatasetDict]

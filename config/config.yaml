@@ -2,7 +2,7 @@ seed: 1234
 cuda_device: 0
 batch_size: 1
 text_column_name: tokens
-label_column_name: ner_tags
+label_column_name: course_tags
 scenario:
   name: few_shot_linear_readout
   metrics:
@@ -11,8 +11,8 @@ scenario:
     - f1_macro
 
 defaults:
-  - dataset: conll2003
-  - dataset_processor: 
-  - encoder: random
-  - evaluation/dataset: nway_kshot_5_10
+  - dataset: fewnerd
+  - dataset_processor: roberta
+  - encoder: roberta
+  - evaluation/dataset: nway_kshot_5_1
   - evaluation/classifier: logistic_regression
