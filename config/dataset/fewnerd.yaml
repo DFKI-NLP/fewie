@@ -1,6 +1,6 @@
 # @package _group_
 
 _target_: datasets.load_dataset
-path: nbroad/few-nerd
+path: chenyuxuan/few-nerd
 name: supervised
 split: test
