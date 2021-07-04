@@ -1,11 +1,10 @@
 import torch
 from transformers import AutoModel
-from typing import Tuple
 from fewie.encoders.encoder import EncoderOutput
-import logging
 
 
 class ContrastiveTransformerEncoder(torch.nn.Module):
+    """Contrastive transformer encoder, for bert, xlnet, spanbert, etc."""
     def __init__(self, model_name_or_path: str) -> None:
         super().__init__()
         self.model = AutoModel.from_pretrained(model_name_or_path)

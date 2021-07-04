@@ -1,5 +1,5 @@
 import torch
-from fewie.encoders.encoder import Encoder, EncoderOutput
+from fewie.encoders.encoder import Encoder
 from fewie.evaluation.classifiers.classifier import Classifier
 from fewie.data.datasets.generic.nway_kshot import ContrastiveNwayKshotDataset
 from fewie.evaluation.scenarios.few_shot_linear_readout import (
@@ -13,8 +13,7 @@ from fewie.evaluation.utils import hinge_contrastive_loss, batch_where_equal
 from tqdm import tqdm
 from copy import deepcopy
 import datasets
-from typing import Optional, List
-import logging
+from typing import Optional, List, Dict
 
 
 def eval_few_show_contrastive_pretraining(

@@ -49,7 +49,13 @@ def hinge_contrastive_loss(
     return torch.mean(loss)
 
 
-def batch_where_equal(labels, targets_orig):
+def batch_where_equal(labels: torch.Tensor, targets_orig: torch.Tensor):
+    """Given a batch of contrastive pairs, for each pair, return a position where `labels`
+    coincide with `targets_orig`.
+
+    Returns:
+        A batch of positions of shape [batch_size, ].
+    """
     labels, targets_orig = torch.squeeze(labels), torch.squeeze(targets_orig)
     batch_size = labels.shape[0]
     pos = []
