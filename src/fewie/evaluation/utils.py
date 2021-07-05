@@ -4,7 +4,6 @@ from functools import partial
 import numpy
 import torch
 from sklearn import metrics
-import logging
 
 
 def normalize(x):
@@ -51,16 +50,22 @@ def hinge_contrastive_loss(
 
 def batch_where_equal(labels: torch.Tensor, targets_orig: torch.Tensor):
     """Given a batch of contrastive pairs, for each pair, return a position where `labels`
-    coincide with `targets_orig`.
+    coincide with `targets_orig`, which is used to track the wanted token in a sentence.
+
+    Args:
+        labels: The labels for tokens in each text of a batch, of shape \
+            `[batch_size * n_ways * (k_shots + 1), seq_len]`.
+        targets_orig: The target entity class, of shape `[batch_size, n_ways * (k_shots + 1)]`.
 
     Returns:
-        A batch of positions of shape [batch_size, ].
+        A batch of positions of shape `[batch_size, n_ways * (k_shots + 1)].
     """
     labels, targets_orig = torch.squeeze(labels), torch.squeeze(targets_orig)
-    batch_size = labels.shape[0]
     pos = []
-    for text_id in range(batch_size):
+    for text_id in range(labels.shape[0]):
         pos_pool = (labels[text_id, :] == targets_orig[text_id]).nonzero().flatten()
+        if pos_pool.nonzero().flatten().shape[0] == 0:
+            return None
         perm = torch.randperm(pos_pool.shape[0])[0]
         pos.append(pos_pool[perm].item())
 

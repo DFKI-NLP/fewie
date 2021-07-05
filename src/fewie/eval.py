@@ -76,8 +76,9 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
             dataset=processed_dataset,
             contrastive_few_shot_dataset=few_shot_dataset,
             device=device,
-            weight_decay=0.0,
-            learning_rate=0.0002,
+            num_epochs=cfg.num_epochs,
+            weight_decay=cfg.weight_decay,
+            learning_rate=cfg.learning_rate,
             batch_size=cfg.batch_size,
             metrics=cfg.scenario.metrics,
         )

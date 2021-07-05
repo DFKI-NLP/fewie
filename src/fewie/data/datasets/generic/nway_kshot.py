@@ -1,4 +1,5 @@
 import logging
+import random
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
@@ -303,20 +304,14 @@ class ContrastiveNwayKshotDataset(NwayKshotDataset):
         for idx, cls in enumerate(cls_sampled):
             negative_pool = self.class_indices.copy()
             negative_pool.pop(cls)
-            negative_pool = [
-                (cls, index)
-                for cls in negative_pool.keys()
-                for index in negative_pool[cls]
-            ]
-            negative_ids = np.random.choice(
-                range(len(negative_pool)), self.k_shots, replace=False
-            )
-            for negative_id in negative_ids:
+            for _ in range(self.k_shots):
+                negative_cls = random.choice(list(negative_pool.keys()))
+                negative_id = random.choice(negative_pool[negative_cls])
                 contrastive_indices.append(
-                    [contrastive_indices[idx][0], negative_pool[negative_id][1]]
+                    [contrastive_indices[idx][0], negative_id]
                 )
                 contrastive_targets.append([1])
-                contrastive_targets_orig.append([cls, negative_pool[negative_id][0]])
+                contrastive_targets_orig.append([cls, negative_cls])
 
         return (
             contrastive_indices,

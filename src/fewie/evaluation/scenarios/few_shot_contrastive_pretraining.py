@@ -14,6 +14,7 @@ from tqdm import tqdm
 from copy import deepcopy
 import datasets
 from typing import Optional, List, Dict
+import logging
 
 
 def eval_few_show_contrastive_pretraining(
@@ -22,6 +23,7 @@ def eval_few_show_contrastive_pretraining(
     encoder: Encoder,
     classifier: Classifier,
     batch_size: int,
+    num_epochs: int,
     weight_decay: float,
     learning_rate: float,
     device: torch.device,
@@ -86,25 +88,28 @@ def eval_few_show_contrastive_pretraining(
         contrastive_targets = contrastive_targets.to(device)
         targets_orig_left = torch.squeeze(contrastive_targets_orig)[:, 0]
         targets_orig_right = torch.squeeze(contrastive_targets_orig)[:, 1]
-        pos_left = batch_where_equal(contrastive_left["labels"], targets_orig_left).to(
-            device
-        )
-        pos_right = batch_where_equal(
-            contrastive_right["labels"], targets_orig_right
-        ).to(device)
+
+        # track the positions of our targeted tokens (of specific entity type)
+        pos_left = batch_where_equal(contrastive_left["labels"], targets_orig_left)
+        pos_right = batch_where_equal(contrastive_right["labels"], targets_orig_right)           
+        if pos_left is None or pos_right is None:
+            logging.warning("Targeted token out of range of seq_len, skip...")
+            continue
+        pos_left, pos_right = pos_left.to(device), pos_right.to(device)
 
         contrastive_left.pop("labels")
         contrastive_right.pop("labels")
 
         # start training
-        model.train()
-        contrastive_embedding = model(
-            contrastive_left, contrastive_right, pos_left, pos_right
-        )
-        loss = hinge_contrastive_loss(contrastive_embedding, contrastive_targets)
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+        for _ in range(num_epochs):
+            model.train()
+            contrastive_embedding = model(
+                contrastive_left, contrastive_right, pos_left, pos_right
+            )
+            loss = hinge_contrastive_loss(contrastive_embedding, contrastive_targets)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
         # build prototype
         model.eval()

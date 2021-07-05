@@ -12,7 +12,12 @@ scenario:
 
 defaults:
   - dataset: conll2003
-  - dataset_processor: albert
+  - dataset_processor: bert
   - encoder: contrastive
   - evaluation/dataset: contrastive_nway_kshot
   - evaluation/classifier: logistic_regression
+
+# optional: involved in contrastive pre-training
+num_epochs: 1
+learning_rate: 0.0001
+weight_decay: 0
