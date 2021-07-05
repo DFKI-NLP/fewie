@@ -307,9 +307,7 @@ class ContrastiveNwayKshotDataset(NwayKshotDataset):
             for _ in range(self.k_shots):
                 negative_cls = random.choice(list(negative_pool.keys()))
                 negative_id = random.choice(negative_pool[negative_cls])
-                contrastive_indices.append(
-                    [contrastive_indices[idx][0], negative_id]
-                )
+                contrastive_indices.append([contrastive_indices[idx][0], negative_id])
                 contrastive_targets.append([1])
                 contrastive_targets_orig.append([cls, negative_cls])
 

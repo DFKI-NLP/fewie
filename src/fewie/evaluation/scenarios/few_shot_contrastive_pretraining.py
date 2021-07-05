@@ -91,7 +91,7 @@ def eval_few_show_contrastive_pretraining(
 
         # track the positions of our targeted tokens (of specific entity type)
         pos_left = batch_where_equal(contrastive_left["labels"], targets_orig_left)
-        pos_right = batch_where_equal(contrastive_right["labels"], targets_orig_right)           
+        pos_right = batch_where_equal(contrastive_right["labels"], targets_orig_right)
         if pos_left is None or pos_right is None:
             logging.warning("Targeted token out of range of seq_len, skip...")
             continue
