@@ -1,6 +1,8 @@
 seed: 1234
 cuda_device: 0
 batch_size: 1
+use_vae: False
+vae_epochs: 1
 text_column_name: tokens
 label_column_name: ner_tags
 scenario:

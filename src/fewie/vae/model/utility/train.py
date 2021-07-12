@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
+from tqdm import tqdm
 from torch.utils.data import DataLoader
 def train(model, data,device,batch_size, epochs=1):
     mse=nn.MSELoss()
@@ -9,7 +10,7 @@ def train(model, data,device,batch_size, epochs=1):
     sampling_interval=int(epochs/10) if int(epochs/10)>0 else 1#add manual mode
     for epoch in range(epochs):
         losses=[]
-        for _x in dataloader:   
+        for _x in tqdm(dataloader):   
             adam.zero_grad()
             #_x=_x.astype('double')
             #x=torch.from_numpy(_x).to(device)

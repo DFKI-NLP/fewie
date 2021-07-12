@@ -24,7 +24,10 @@ class Encoder(nn.Module):
         #x=x.double()
         #x2=x.double()
         #print('tensor type sanity:', x.dtype, x.double().dtype, x2.dtype)
-        x=self.fc1(x.float())
+        try:
+            x=self.fc1(x.float())
+        except:
+            x=self.fc1(x)
         x= self.ReLU(x)#x.double()))
         #print('post relu:',list(x.size()))
         mu=self.fc_mu(x)
