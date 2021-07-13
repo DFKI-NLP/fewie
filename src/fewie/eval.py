@@ -6,6 +6,7 @@ from hydra.utils import instantiate
 from omegaconf import DictConfig
 import numpy as np
 import datasets
+from datasets import load_dataset
 from fewie.data.datasets.utils import get_label_to_id
 from fewie.evaluation.scenarios.few_shot_linear_readout import eval_few_shot_linear_readout
 from fewie.evaluation.utils import seed_everything
@@ -45,9 +46,9 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
     #    transforms.ToTensor()
     #    ])
     
-    print(dataset['pos_tags'][0])
-    print(type(dataset['pos_tags']))
-    print(type(dataset['pos_tags'][0]))
+    #print(dataset['pos_tags'][0])
+    #print(type(dataset['pos_tags']))
+    #print(type(dataset['pos_tags'][0]))
     if cfg.use_vae:
 
         print('using vae support')
@@ -63,7 +64,7 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
         
          
         data=[]
-        for i in range(len(dataset)):
+        for i in range(10):#len(dataset)):# REDUCED FOR TESTING
              for j, label in enumerate(dataset.features):
                  if j==0:
                        data.append({label:dataset[label][i]})
@@ -82,8 +83,10 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
     #print(list(data.keys()))
     #fieldn=dataset.features
     #print(np.array(data).shape)
+        _fieldnames=list(dataset.features)
+        _fieldnames.append('vae_tag')
         with open('/netscratch/mikkelsen/code/fewie/src/fewie/data/datasets/'+cfg.dataset.path+'_'+cfg.scenario.name+'.csv','w') as csvfile:#no safetymeasure here, path hardcoded! TODO
-             dictwriter=csv.DictWriter(csvfile, fieldnames=dataset.features)#dataset.features)
+             dictwriter=csv.DictWriter(csvfile, fieldnames=_fieldnames)#dataset.features)
              dictwriter.writeheader()
              dictwriter.writerows(data)
 
@@ -91,9 +94,9 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
     
     
     
-    return  
-    dataset['pos_tags']=np.zeros(len(dataset['pos_tags']))
-    print(dataset.shape)
+    #return  
+    #dataset['pos_tags']=np.zeros(len(dataset['pos_tags']))
+    #print(dataset.shape)
     dataset_processor = instantiate(
         cfg.dataset_processor,
         label_to_id=label_to_id,
@@ -110,12 +113,12 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
 
     classifier = instantiate(cfg.evaluation.classifier)
 
-    processed_dataset = dataset_processor(dataset)
-    
-    print(processed_dataset['pos_tags'][0])
+ #   processed_dataset = dataset_processor(dataset)
+    processed_dataset=load_dataset('csv', data_files='/netscratch/mikkelsen/code/fewie/src/fewie/data/datasets/'+cfg.dataset.path+'_'+cfg.scenario.name+'.csv')
+#    print(processed_dataset['pos_tags'][0])
 
-    print(aset.shape)
-    
+#    print(aset.shape)
+#    return
 #    return
     if cfg.scenario.name == "few_shot_linear_readout":
         few_shot_dataset = instantiate(
