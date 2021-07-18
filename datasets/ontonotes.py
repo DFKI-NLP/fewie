@@ -33,11 +33,10 @@ NER_TAGS_DICT = {
     "PERCENT": 13,
     "PERSON": 14,
     "PRODUCT": 15,
-    "QUANTITY": 16, 
+    "QUANTITY": 16,
     "TIME": 17,
-    "WORK_OF_ART": 18
+    "WORK_OF_ART": 18,
 }
-
 
 
 class OntoNotesConfig(datasets.BuilderConfig):
@@ -81,7 +80,7 @@ class OntoNotes(datasets.GeneratorBasedBuilder):
                                 "PERCENT",
                                 "PERSON",
                                 "PRODUCT",
-                                "QUANTITY", 
+                                "QUANTITY",
                                 "TIME",
                                 "WORK_OF_ART",
                             ]
@@ -92,7 +91,7 @@ class OntoNotes(datasets.GeneratorBasedBuilder):
             supervised_keys=None,
             homepage="https://catalog.ldc.upenn.edu/LDC2013T19",
             citation=_CITATION,
-            license=_LICENCE
+            license=_LICENCE,
         )
 
     def _split_generators(self, dl_manager):
@@ -103,24 +102,21 @@ class OntoNotes(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "filepath": os.path.join(
-                        urls_to_download, "onto.train.ner",
+                        urls_to_download,
+                        "onto.train.ner",
                     )
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "filepath": os.path.join(
-                        urls_to_download, "onto.development.ner"
-                    )
+                    "filepath": os.path.join(urls_to_download, "onto.development.ner")
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 gen_kwargs={
-                    "filepath": os.path.join(
-                        urls_to_download, "onto.test.ner"
-                    )
+                    "filepath": os.path.join(urls_to_download, "onto.test.ner")
                 },
             ),
         ]
@@ -137,7 +133,7 @@ class OntoNotes(datasets.GeneratorBasedBuilder):
                 if line:
                     assert len(line) == 4
                     token, pos_tag, dependency, ner_tag = line
-                    if ner_tag != 'O':
+                    if ner_tag != "O":
                         ner_tag = ner_tag.split("-")[1]
                     tokens.append(token)
                     pos_tags.append(pos_tag)
@@ -151,7 +147,7 @@ class OntoNotes(datasets.GeneratorBasedBuilder):
                         "id": str(id),
                         "pos_tags": pos_tags,
                         "parsing": dependencies,
-                        "ner_tags": ner_tags
+                        "ner_tags": ner_tags,
                     }
                     tokens, pos_tags, dependencies, ner_tags = [], [], [], []
                     id += 1
@@ -164,6 +160,6 @@ class OntoNotes(datasets.GeneratorBasedBuilder):
                     "id": str(id),
                     "pos_tags": pos_tags,
                     "parsing": dependencies,
-                    "ner_tages": ner_tags
+                    "ner_tages": ner_tags,
                 }
                 yield record["id"], record
