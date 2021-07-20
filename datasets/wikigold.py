@@ -40,6 +40,18 @@ NER_TAGS_DICT = {
     "MISC": 4,
 }
 
+NER_BIO_TAGS_DICT = {
+    "O": 0,
+    "B-PER": 1,
+    "I-PER": 2,
+    "B-LOC": 3,
+    "I-LOC": 4,
+    "B-ORG": 5,
+    "I-ORG": 6,
+    "B-MISC": 7,
+    "I-MISC": 8
+}
+
 
 class WikiGoldConfig(datasets.BuilderConfig):
     """BuilderConfig for WikiGold"""
@@ -65,6 +77,12 @@ class WikiGold(datasets.GeneratorBasedBuilder):
                             names=["O", "PER", "LOC", "ORG", "MISC"]
                         )
                     ),
+                    "ner_bio_tags": datasets.features.Sequence(
+                        datasets.features.ClassLabel(
+                            names=["O", "B-PER", "I-PER", "B-LOC", "I-LOC", 
+                            "B-ORG", "I-ORG", "B-MISC", "I-MISC"]
+                        )
+                    ),
                 }
             ),
             supervised_keys=None,
@@ -77,7 +95,7 @@ class WikiGold(datasets.GeneratorBasedBuilder):
         urls_to_download = dl_manager.download_and_extract(_URL)
         return [
             datasets.SplitGenerator(
-                name=datasets.Split.TEST,
+                name=datasets.Split.TRAIN,
                 gen_kwargs={"filepath": urls_to_download},
             ),
         ]
@@ -87,7 +105,7 @@ class WikiGold(datasets.GeneratorBasedBuilder):
         id = 0
 
         with open(filepath, "r") as f:
-            tokens, ner_tags = [], []
+            tokens, ner_tags, ner_bio_tags = [], [], []
             for line in tqdm(f, total=num_lines):
                 line = line.strip().split()
 
@@ -97,10 +115,11 @@ class WikiGold(datasets.GeneratorBasedBuilder):
 
                     if token == "-DOCSTART-":
                         continue
-
-                    if ner_tag != "O":
-                        ner_tag = ner_tag.split("-")[1]
+                    
                     tokens.append(token)
+                    ner_bio_tags.append(ner_tag)
+                    if ner_tag != "O":
+                        ner_tag = ner_tag.split("-")[1]                  
                     ner_tags.append(NER_TAGS_DICT[ner_tag])
 
                 elif tokens:
@@ -109,6 +128,7 @@ class WikiGold(datasets.GeneratorBasedBuilder):
                         "tokens": tokens,
                         "id": str(id),
                         "ner_tags": ner_tags,
+                        "ner_bio_tags": ner_bio_tags,
                     }
                     tokens, ner_tags = [], []
                     id += 1
@@ -120,5 +140,6 @@ class WikiGold(datasets.GeneratorBasedBuilder):
                     "tokens": tokens,
                     "id": str(id),
                     "ner_tags": ner_tags,
+                    "ner_bio_tags": ner_bio_tags,
                 }
                 yield record["id"], record

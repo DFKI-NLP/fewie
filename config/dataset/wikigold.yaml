@@ -2,4 +2,4 @@
 
 _target_: datasets.load_dataset
 path: ./datasets/wikigold.py
-split: test
+split: train
