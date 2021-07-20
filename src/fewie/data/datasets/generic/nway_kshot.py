@@ -130,7 +130,7 @@ class NwayKshotDataset(torch.utils.data.Dataset):
 
         support_indices = np.concatenate(support_indices).flatten()
         support_targets = np.concatenate(support_targets).flatten()
-        support_targets_orig = np.concatenate(query_targets_orig).flatten()
+        support_targets_orig = np.concatenate(support_targets_orig).flatten()
 
         query_indices = np.concatenate(query_indices).flatten()
         query_targets = np.concatenate(query_targets).flatten()

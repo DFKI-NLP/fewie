@@ -1,0 +1,6 @@
+# @package _group_
+
+_target_: datasets.load_dataset
+path: json
+data_files: ./datasets/lenovo.json
+split: train
