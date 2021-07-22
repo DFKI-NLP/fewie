@@ -34,7 +34,20 @@ def hinge_contrastive_loss(
     contrastive_targets: torch.Tensor,
     p: float = 2,
     margin: float = 4,
-):
+) -> torch.Tensor:
+    """Compute the Hinge (Simple) Contrastive Loss over a batch.
+
+    Args: 
+        contrastive_embedding: The contextual token-level embedding given by a contrastive \
+            encoder, of size `[..., 2, embedding_size]`.
+        contrastive_targets: The classes where the two contrastive tokens come from, of size \
+            `[batch_size, n_ways * (k_shots + 1)]`.
+        p: Specify which p-norm we want.
+        margin: The maximum edge of a dissimilar pair.
+    
+    Returns: 
+        A scalar representing the batch-mean of the defined loss.
+    """
     embedding_left = normalize(torch.squeeze(contrastive_embedding[:, 0, :]))
     embedding_right = normalize(torch.squeeze(contrastive_embedding[:, 1, :]))
 
@@ -48,7 +61,49 @@ def hinge_contrastive_loss(
     return torch.mean(loss)
 
 
-def batch_where_equal(labels: torch.Tensor, targets_orig: torch.Tensor):
+def n_pair_loss(
+    contrastive_embedding: torch.Tensor, 
+    contrastive_targets_orig: torch.Tensor
+) -> torch.Tensor:
+    """Compute the N-pair Loss over a batch.
+
+    Args: 
+        contrastive_embedding: The contextual token-level embedding given by a contrastive \
+            encoder, of size `[..., 2, embedding_size]`.
+        contrastive_targets_orig: The classes where the two contrastive tokens come from, of size \
+            `[batch_size, n_ways * (k_shots + 1), 2]`.
+
+    Returns: 
+        Mean of the defined loss given by a scalar.
+    """
+    # both of shape `[n_ways * (k_shots + 1), embedding_size]` after squeezing
+    embedding_left = normalize(torch.squeeze(contrastive_embedding[:, 0, :]))
+    embedding_right = normalize(torch.squeeze(contrastive_embedding[:, 1, :]))
+
+    # [batch_size * n_ways * (k_shots + 1), 2]
+    contrastive_targets_orig = torch.squeeze(contrastive_targets_orig)
+    
+    centered_classes = torch.unique(contrastive_targets_orig[:, 0])
+    n_pair_losses = 0
+    for cls in centered_classes:
+        # compute denominator from all pairs
+        denominator = 0
+        pair_ids = (contrastive_targets_orig[:, 0] == cls).nonzero().flatten()
+        for i in pair_ids:
+            denominator += torch.dot(embedding_left[i], embedding_right[i])
+        
+        # compute numerator from similar pair
+        i = (contrastive_targets_orig[pair_ids, 1] == cls).nonzero().flatten()
+        numerator = torch.dot(embedding_left[i], embedding_right[i])
+
+        # compute n-pair loss centering one class with 1 positive and N negative contrastives
+        loss = - torch.log(numerator / denominator)
+        n_pair_losses += loss
+
+    return n_pair_loss / len(centered_classes)
+
+
+def batch_where_equal(labels: torch.Tensor, targets_orig: torch.Tensor) -> torch.Tensor:
     """Given a batch of contrastive pairs, for each pair, return a position where `labels`
     coincide with `targets_orig`, which is used to track the wanted token in a sentence.
 
@@ -58,7 +113,7 @@ def batch_where_equal(labels: torch.Tensor, targets_orig: torch.Tensor):
         targets_orig: The target entity class, of shape `[batch_size, n_ways * (k_shots + 1)]`.
 
     Returns:
-        A batch of positions of shape `[batch_size, n_ways * (k_shots + 1)].
+        A batch of positions of shape `[batch_size, n_ways * (k_shots + 1)]`.
     """
     labels, targets_orig = torch.squeeze(labels), torch.squeeze(targets_orig)
     pos = []
