@@ -9,9 +9,9 @@ from fewie.evaluation.scenarios.few_shot_linear_readout import (
     get_metric,
 )
 from fewie.evaluation.utils import (
-    hinge_contrastive_loss, 
+    hinge_contrastive_loss,
     n_pair_loss,
-    batch_where_equal
+    batch_where_equal,
 )
 
 from tqdm import tqdm
@@ -110,7 +110,7 @@ def eval_few_show_contrastive_pretraining(
             contrastive_embedding = model(
                 contrastive_left, contrastive_right, pos_left, pos_right
             )
-            #loss = hinge_contrastive_loss(contrastive_embedding, contrastive_targets)
+            # loss = hinge_contrastive_loss(contrastive_embedding, contrastive_targets)
             loss = n_pair_loss(contrastive_embedding, contrastive_targets_orig)
             optimizer.zero_grad()
             loss.backward()

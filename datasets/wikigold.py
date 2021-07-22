@@ -49,7 +49,7 @@ NER_BIO_TAGS_DICT = {
     "B-ORG": 5,
     "I-ORG": 6,
     "B-MISC": 7,
-    "I-MISC": 8
+    "I-MISC": 8,
 }
 
 
@@ -79,8 +79,17 @@ class WikiGold(datasets.GeneratorBasedBuilder):
                     ),
                     "ner_bio_tags": datasets.features.Sequence(
                         datasets.features.ClassLabel(
-                            names=["O", "B-PER", "I-PER", "B-LOC", "I-LOC", 
-                            "B-ORG", "I-ORG", "B-MISC", "I-MISC"]
+                            names=[
+                                "O",
+                                "B-PER",
+                                "I-PER",
+                                "B-LOC",
+                                "I-LOC",
+                                "B-ORG",
+                                "I-ORG",
+                                "B-MISC",
+                                "I-MISC",
+                            ]
                         )
                     ),
                 }
@@ -115,11 +124,11 @@ class WikiGold(datasets.GeneratorBasedBuilder):
 
                     if token == "-DOCSTART-":
                         continue
-                    
+
                     tokens.append(token)
                     ner_bio_tags.append(ner_tag)
                     if ner_tag != "O":
-                        ner_tag = ner_tag.split("-")[1]                  
+                        ner_tag = ner_tag.split("-")[1]
                     ner_tags.append(NER_TAGS_DICT[ner_tag])
 
                 elif tokens:
