@@ -1,6 +1,5 @@
 # @package _group_
 
 _target_: datasets.load_dataset
-path: wnut_17
-version: 1.0.0
+path: ./datasets/ontonotes
 split: test  # or 'train', 'validation'

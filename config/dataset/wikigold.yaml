@@ -1,5 +1,5 @@
 # @package _group_
 
 _target_: datasets.load_dataset
-path: germaner
+path: ./datasets/wikigold.py
 split: train

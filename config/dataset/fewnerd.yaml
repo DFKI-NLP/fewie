@@ -1,6 +1,6 @@
 # @package _group_
 
 _target_: datasets.load_dataset
-path: chenyuxuan/few-nerd
+path: dfki-nlp/few-nerd
 name: supervised
 split: test
