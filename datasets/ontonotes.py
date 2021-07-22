@@ -160,6 +160,6 @@ class OntoNotes(datasets.GeneratorBasedBuilder):
                     "id": str(id),
                     "pos_tags": pos_tags,
                     "parsing": dependencies,
-                    "ner_tages": ner_tags,
+                    "ner_tags": ner_tags,
                 }
                 yield record["id"], record
