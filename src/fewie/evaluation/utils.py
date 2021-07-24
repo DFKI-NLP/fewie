@@ -33,7 +33,7 @@ def hinge_contrastive_loss(
     contrastive_embedding: torch.Tensor,
     contrastive_targets: torch.Tensor,
     p: float = 2,
-    margin: float = 4,
+    margin: float = 2,
 ) -> torch.Tensor:
     """Compute the Hinge (Simple) Contrastive Loss over a batch.
 

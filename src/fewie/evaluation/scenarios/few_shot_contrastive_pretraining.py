@@ -110,8 +110,8 @@ def eval_few_show_contrastive_pretraining(
             contrastive_embedding = model(
                 contrastive_left, contrastive_right, pos_left, pos_right
             )
-            # loss = hinge_contrastive_loss(contrastive_embedding, contrastive_targets)
-            loss = n_pair_loss(contrastive_embedding, contrastive_targets_orig)
+            loss = hinge_contrastive_loss(contrastive_embedding, contrastive_targets)
+            #loss = n_pair_loss(contrastive_embedding, contrastive_targets_orig)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()

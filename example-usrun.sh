@@ -9,5 +9,7 @@ srun -K \
   --container-image=$IMAGE \
   --ntasks=1 \
   --nodes=1 \
-  pip3 install . && \
-  python evaluate.py
+  -p A100 \
+  --gpus=1 \
+  sh run.sh
+  $*

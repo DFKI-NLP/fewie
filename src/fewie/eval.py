@@ -62,7 +62,7 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
             metrics=cfg.scenario.metrics,
         )
 
-    if cfg.scenario.name == "few_shot_contrastive_pretraining":
+    elif cfg.scenario.name == "few_shot_contrastive_pretraining":
         few_shot_dataset = instantiate(
             cfg.evaluation.dataset,
             dataset=processed_dataset,
