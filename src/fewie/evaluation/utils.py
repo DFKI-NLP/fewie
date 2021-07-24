@@ -88,18 +88,19 @@ def n_pair_loss(
         # compute denominator from all pairs
         denominator = 0
         pair_ids = (contrastive_targets_orig[:, 0] == cls).nonzero().flatten()
-        for i in pair_ids:
-            denominator += torch.dot(embedding_left[i], embedding_right[i])
+        for id in pair_ids:
+            denominator += torch.dot(embedding_left[id], embedding_right[id])
 
         # compute numerator from similar pair
-        i = (contrastive_targets_orig[pair_ids, 1] == cls).nonzero().flatten()
-        numerator = torch.dot(embedding_left[i], embedding_right[i])
+        id = (contrastive_targets_orig[pair_ids, 1] == cls).nonzero().flatten()
+        id = int(id.item())
+        numerator = torch.dot(embedding_left[id], embedding_right[id])
 
         # compute n-pair loss centering one class with 1 positive and N negative contrastives
         loss = -torch.log(numerator / denominator)
         n_pair_losses += loss
 
-    return n_pair_loss / len(centered_classes)
+    return n_pair_losses / len(centered_classes)
 
 
 def batch_where_equal(labels: torch.Tensor, targets_orig: torch.Tensor) -> torch.Tensor:
