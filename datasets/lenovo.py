@@ -1,8 +1,10 @@
 import datasets
 import json
+import os
+import fewie
 
 _CITATION = """
-
+NA.
 """
 
 _DESCRIPTION = """
@@ -79,7 +81,9 @@ class Lenovo(datasets.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager):
         """Returns SplitGenerators."""
-        filepath = "./lenovo.json"
+        filepath = os.path.abspath(
+            os.path.join(fewie.__file__, '../../../datasets/lenovo.json')
+        )
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,

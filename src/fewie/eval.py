@@ -18,9 +18,9 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
     dataset = instantiate(cfg.dataset)
 
     if isinstance(dataset, datasets.DatasetDict):
-        label_to_id = get_label_to_id(dataset["train"].features, cfg.label_column_name)
+        label_to_id = get_label_to_id(dataset["train"], cfg.label_column_name)
     else:
-        label_to_id = get_label_to_id(dataset.features, cfg.label_column_name)
+        label_to_id = get_label_to_id(dataset, cfg.label_column_name)
 
     dataset_processor = instantiate(
         cfg.dataset_processor,

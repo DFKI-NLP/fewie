@@ -20,13 +20,12 @@ def get_label_list(labels):
     return label_list
 
 
-def get_label_to_id(features, label_column_name: str) -> Union[Dict[str, int], Dict[int, int]]:
-    if isinstance(features[label_column_name].feature, datasets.ClassLabel):
-        label_list = features[label_column_name].feature.names
+def get_label_to_id(dataset, label_column_name: str) -> Union[Dict[str, int], Dict[int, int]]:
+    if isinstance(dataset.features[label_column_name].feature, datasets.ClassLabel):
+        label_list = dataset.features[label_column_name].feature.names
         # No need to convert the labels since they are already ints.
         label_to_id = {i: i for i in range(len(label_list))}
     else:
-        label_list = get_label_list(datasets["train"][label_column_name])
+        label_list = get_label_list(dataset[label_column_name])
         label_to_id = {l: i for i, l in enumerate(label_list)}
-
     return label_to_id
