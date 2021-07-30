@@ -2,4 +2,5 @@
 
 _target_: datasets.load_dataset
 path: ./datasets/lenovo.py
+data_files: ./datasets/lenovo.json
 split: train
