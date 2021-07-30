@@ -16,7 +16,6 @@ def resolve_relative_path(cfg: DictConfig, start_path: str):
         if base_path[-6:] == "/fewie":
             break
         base_path = os.path.dirname(base_path)
-    print(base_path)
 
     for config_column_name in ["path", "data_files"]:
         if config_column_name in cfg.dataset:
