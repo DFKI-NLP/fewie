@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 @hydra.main(config_name="config", config_path="config")
 def evaluate(cfg: DictConfig) -> None:
-    resolve_relative_path(cfg=cfg, base_path=__file__)
+    resolve_relative_path(cfg=cfg, start_path=__file__)
     print(OmegaConf.to_yaml(cfg))
 
     evaluation_results = evaluate_config(cfg)
