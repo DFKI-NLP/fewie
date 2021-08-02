@@ -12,7 +12,7 @@ scenario:
 
 defaults:
   - dataset: smartdata
-  - dataset_processor: bert-german
-  - encoder: bert-german
+  - dataset_processor: albert-german-ner
+  - encoder: albert-german-ner
   - evaluation/dataset: nway_kshot_5_1
   - evaluation/classifier: logistic_regression

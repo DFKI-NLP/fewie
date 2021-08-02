@@ -1,5 +1,5 @@
 # @package _group_
 
 
-_target: fewie.encoders.transformer.GermbertEncoder
+_target: fewie.encoders.albert.AlbertEncoder
 model_name_or_path: abhilash1910/albert-german-ner
