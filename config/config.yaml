@@ -11,8 +11,8 @@ scenario:
     - f1_macro
 
 defaults:
-  - dataset: conll2003
-  - dataset_processor: bert
-  - encoder: bert
+  - dataset: smartdata
+  - dataset_processor: bert-german
+  - encoder: bert-german
   - evaluation/dataset: nway_kshot_5_1
   - evaluation/classifier: logistic_regression
