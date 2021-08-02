@@ -3,4 +3,4 @@
 _target_: fewie.dataset_processors.transformer.TransformerProcessor
 tokenizer_name_or_path: xlm-clm-ende-1024
 max_length: 128
-label_all_tokens: false
+label_all_tokens: False
