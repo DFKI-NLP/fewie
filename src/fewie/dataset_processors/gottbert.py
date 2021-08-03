@@ -7,7 +7,7 @@ import datasets
 from fewie.dataset_processors.processor import DatasetProcessor
 
 
-class TransformerProcessor(DatasetProcessor):
+class GottBERTProcessor(DatasetProcessor):
     def __init__(
         self,
         tokenizer_name_or_path: str,
@@ -17,18 +17,20 @@ class TransformerProcessor(DatasetProcessor):
         max_length: int = 128,
         label_all_tokens: bool = False,
         padding: str = "max_length",
+        add_prefix_space: bool = True
     ) -> None:
-        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name_or_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name_or_path, add_prefix_space=True)
         self.text_column_name = text_column_name
         self.label_column_name = label_column_name
         self.label_to_id = label_to_id
         self.max_length = max_length
         self.label_all_tokens = label_all_tokens
         self.padding = padding
+        self.prefix_space=add_prefix_space
 
     @property
     def feature_columns(self) -> List[str]:
-        return ["input_ids", "token_type_ids", "attention_mask", "labels"]
+        return ["input_ids", "attention_mask", "labels"]
 
     def __call__(
         self, dataset: Union[datasets.Dataset, datasets.DatasetDict]
@@ -43,6 +45,8 @@ class TransformerProcessor(DatasetProcessor):
             truncation=True,
             # We use this argument because the texts in our dataset are lists of words (with a label for each word).
             is_split_into_words=True,
+	    # roberta requirement:
+            #add_prefix_space=self.prefix_space
         )
 
         labels = []
@@ -69,3 +73,4 @@ class TransformerProcessor(DatasetProcessor):
             labels.append(label_ids)
         tokenized_inputs["labels"] = labels
         return tokenized_inputs
+
