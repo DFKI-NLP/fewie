@@ -1,4 +1,4 @@
-# @package _group_
+# @package dataset
 
 _target_: datasets.load_dataset
 path: dfki-nlp/few-nerd

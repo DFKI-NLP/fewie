@@ -1,4 +1,4 @@
-# @package _group_
+# @package evaluation.dataset
 
 _target_: fewie.data.datasets.generic.nway_kshot.NwayKshotNaRestDataset
 n_ways: 5
