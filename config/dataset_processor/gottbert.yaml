@@ -1,0 +1,6 @@
+# @package _group_
+
+_target_: fewie.dataset_processors.gottbert.GottBERTProcessor
+tokenizer_name_or_path: uklfr/gottbert-base
+max_length: 128
+label_all_tokens: false
