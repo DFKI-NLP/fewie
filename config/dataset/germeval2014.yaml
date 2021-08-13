@@ -1,0 +1,6 @@
+# @package dataset
+
+_target_: datasets.load_dataset
+path: germeval_14
+version: 2.0.0
+split: test # or "train", "validation"
