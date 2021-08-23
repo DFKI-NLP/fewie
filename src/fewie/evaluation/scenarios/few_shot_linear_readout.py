@@ -17,11 +17,15 @@ def mean_confidence_interval(data: List[float], confidence: float = 0.95):
     num = len(array)
     ddof = num - 1
     mean, std_error_mean = np.mean(array), scipy.stats.sem(array)
-    margin_of_error = std_error_mean * scipy.stats.t._ppf((1.0 + confidence) / 2.0, ddof)
+    margin_of_error = std_error_mean * scipy.stats.t._ppf(
+        (1.0 + confidence) / 2.0, ddof
+    )
     return (
         mean,
         margin_of_error,
-        scipy.stats.t.interval(0.95, ddof, loc=np.mean(array), scale=scipy.stats.sem(array)),
+        scipy.stats.t.interval(
+            0.95, ddof, loc=np.mean(array), scale=scipy.stats.sem(array)
+        ),
     )
 
 
@@ -121,12 +125,16 @@ def eval_few_shot_linear_readout(
             query_labels = query["labels"].cpu().numpy()
 
             support = {
-                key: tensor.to(device).view(batch_size * n_ways * k_shots, seq_len).long()
+                key: tensor.to(device)
+                .view(batch_size * n_ways * k_shots, seq_len)
+                .long()
                 for key, tensor in support.items()
                 if key != "labels"
             }
             query = {
-                key: tensor.to(device).view(batch_size * n_ways * n_queries, seq_len).long()
+                key: tensor.to(device)
+                .view(batch_size * n_ways * n_queries, seq_len)
+                .long()
                 for key, tensor in query.items()
                 if key != "labels"
             }

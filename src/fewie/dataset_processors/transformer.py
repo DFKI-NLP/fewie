@@ -41,7 +41,7 @@ class TransformerProcessor(DatasetProcessor):
             padding=self.padding,
             max_length=self.max_length,
             truncation=True,
-            # We use this argument because the texts in our dataset are lists of words 
+            # We use this argument because the texts in our dataset are lists of words
             # (with a label for each word).
             is_split_into_words=True,
         )
@@ -52,18 +52,20 @@ class TransformerProcessor(DatasetProcessor):
             previous_word_idx = None
             label_ids = []
             for word_idx in word_ids:
-                # Special tokens have a word id that is None. We set the label to -100 so they 
+                # Special tokens have a word id that is None. We set the label to -100 so they
                 # are automatically ignored in the loss function.
                 if word_idx is None:
                     label_ids.append(-100)
                 # We set the label for the first token of each word.
                 elif word_idx != previous_word_idx:
                     label_ids.append(self.label_to_id[label[word_idx]])
-                # For the other tokens in a word, we set the label to either the current label or -100, 
+                # For the other tokens in a word, we set the label to either the current label or -100,
                 # depending on the label_all_tokens flag.
                 else:
                     label_ids.append(
-                        self.label_to_id[label[word_idx]] if self.label_all_tokens else -100
+                        self.label_to_id[label[word_idx]]
+                        if self.label_all_tokens
+                        else -100
                     )
                 previous_word_idx = word_idx
 

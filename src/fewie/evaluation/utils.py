@@ -10,9 +10,9 @@ from typing import Callable
 def seed_everything(seed: int) -> None:
     """Sets random seed anywhere randomness is involved.
 
-    This process makes sure all the randomness-involved operations yield the 
+    This process makes sure all the randomness-involved operations yield the
     same result under the same `seed`, so each experiment is reproducible.
-    In this function, we set the same random seed for the following modules: 
+    In this function, we set the same random seed for the following modules:
     `random`, `numpy` and `torch`.
     """
     random.seed(seed)
@@ -27,8 +27,8 @@ def get_metric(metric: str) -> Callable:
     Args:
         metric: The name of metric we want, should be one of :
             "accuracy", "precision_micro", "recall_micro", "f1_micro", "f1_macro".
-    
-    Returns: 
+
+    Returns:
         The corresponding metric-function.
     """
     return {
