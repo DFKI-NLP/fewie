@@ -57,7 +57,7 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         class_labels = list(classes)
 
         # For each class, maintain a list of text-ids where entities from it can be
-        # found. Notice that if the i-th text contains n tokens from class C (given by 
+        # found. Notice that if the i-th text contains n tokens from class C (given by
         # class id: c), then `i` appears in list `class_indices[c]` n times.
         self.class_indices: Dict[int, List[int]] = {}
         for idx, example in enumerate(dataset):
@@ -110,7 +110,7 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         """Sample support set of size K and query set of size K'.
 
         Args:
-            cls_sampled: A list of length N consisting of the sampled class-ids.       
+            cls_sampled: A list of length N consisting of the sampled class-ids.
         Returns:
             support_indices: A list of text-ids for support set, of length N*K.
             support_targets: A list of encoded class-ids for support set.
@@ -202,8 +202,7 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         )
 
     def __len__(self):
-        """The number of episodes (i.e. runs) of the few-shot dataset.
-        """
+        """The number of episodes (i.e. runs) of the few-shot dataset."""
         return self.n_samples
 
 
@@ -212,6 +211,7 @@ class NwayKshotNaDedicatedDataset(NwayKshotDataset):
         dataset, which supports users adding an 'NA'-class using a customizable \
         class name, and mandatorily contains this class in the sampled classes.
     """
+
     def __init__(
         self,
         dataset: datasets.Dataset,
@@ -263,9 +263,9 @@ class NwayKshotNaRestDataset(NwayKshotDataset):
         dataset, which mandatorily samples N-1 classes first, then treat all the \
         rest classes as one class ("negative") to be sampled and added.
     """
+
     def _sample_classes(self) -> np.ndarray:
-        """Sample N-1 classes from all the possible classes in the original dataset.
-        """
+        """Sample N-1 classes from all the possible classes in the original dataset."""
         return np.random.choice(self.classes, self.n_ways - 1, replace=False)
 
     def _sample_indices_and_targets(
@@ -274,7 +274,7 @@ class NwayKshotNaRestDataset(NwayKshotDataset):
         """Sample support set of size K and query set of size K'.
 
         Args:
-            cls_sampled: A list of length N-1 consisting of the sampled class-ids.       
+            cls_sampled: A list of length N-1 consisting of the sampled class-ids.
         Returns:
             support_indices: A list of text-ids for support set, of length N*K.
             support_targets: A list of encoded class-ids for support set.
