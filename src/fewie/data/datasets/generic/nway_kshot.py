@@ -107,7 +107,7 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         List[List[int]],
         List[List[int]],
     ]:
-        """Sample support set of size K and query set of size K'.
+        """Samples a support set of size K and query set of size K'.
 
         Args:
             cls_sampled: A list of length N consisting of the sampled class-ids.
@@ -153,7 +153,7 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         )
 
     def __getitem__(self, item):
-        """Fetch a batch of data from original dataset using the sampled indices.
+        """Fetches a batch of data from original dataset using the sampled indices.
 
         Args:
             item: The batch id, not relevant if we stick to for-loop to iterate the dataloader.
