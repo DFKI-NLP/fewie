@@ -111,6 +111,7 @@ class NwayKshotDataset(torch.utils.data.Dataset):
 
         Args:
             cls_sampled: A list of length N consisting of the sampled class-ids.
+
         Returns:
             support_indices: A list of text-ids for support set, of length N*K.
             support_targets: A list of encoded class-ids for support set.
@@ -156,6 +157,7 @@ class NwayKshotDataset(torch.utils.data.Dataset):
 
         Args:
             item: The batch id, not relevant if we stick to for-loop to iterate the dataloader.
+
         Returns:
             support: A list of texts for support set, of shape `[N*K, seq_len]`.
             support_targets: A numpy list of encoded class-ids for support set.
@@ -275,6 +277,7 @@ class NwayKshotNaRestDataset(NwayKshotDataset):
 
         Args:
             cls_sampled: A list of length N-1 consisting of the sampled class-ids.
+
         Returns:
             support_indices: A list of text-ids for support set, of length N*K.
             support_targets: A list of encoded class-ids for support set.
