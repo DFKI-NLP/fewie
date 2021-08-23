@@ -75,6 +75,6 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
             metrics=cfg.scenario.metrics,
         )
     else:
-        raise ValueError("Unknown evaluation scenario '%s'" % cfg.scenario)
+        raise ValueError("Unknown evaluation scenario {}".format(cfg.scenario))
 
     return evaluation_results
