@@ -35,7 +35,7 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
 
     dataset = instantiate(cfg.dataset)
 
-    # numerize labels (NER tags in this case) to {0, 1, ..., (#entity types)}
+    # numerize labels (NER tags in this case) to {0, 1, ..., #classes}
     if isinstance(dataset, datasets.DatasetDict):
         label_to_id = get_label_to_id(dataset["train"], cfg.label_column_name)
     else:

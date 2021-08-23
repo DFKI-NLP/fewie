@@ -102,6 +102,7 @@ def eval_few_shot_linear_readout(
     with torch.no_grad():
         for batch in tqdm(dataloader):
             # support: [batch_size, n_ways * k_shots, ...]
+            #   with columns: `attention_mask`, `input_ids`, `labels`, `token_type_ids`
             # query: [batch_size, n_ways * n_queries, ...]
             # support_targets: [batch_size, n_ways * k_shots]
             # query_targets: [batch_size, n_ways * n_queries]
