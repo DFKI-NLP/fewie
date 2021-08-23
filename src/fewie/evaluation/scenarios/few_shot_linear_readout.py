@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import scipy
@@ -13,39 +13,96 @@ from fewie.evaluation.utils import get_metric
 
 
 def mean_confidence_interval(data: List[float], confidence: float = 0.95):
+    """Computes the mean and error margin of given data for a given confidence level.
+
+    Args:
+        data: A list of data (in this case F1-scores).
+        confidence: The coverage probability we want to achieve with error margin.
+
+    Returns:
+        Mean and margin error of data, where mean equals the arithmetic average of data,
+        and margin error means: `[mean - margin_error, mean + margin_error]` covers
+        `confidence`*100% of the data points from `data`.
+    """
     array = np.array(data)
     num = len(array)
     ddof = num - 1
     mean, std_error_mean = np.mean(array), scipy.stats.sem(array)
-    margin_of_error = std_error_mean * scipy.stats.t._ppf((1.0 + confidence) / 2.0, ddof)
+    margin_of_error = std_error_mean * scipy.stats.t._ppf(
+        (1.0 + confidence) / 2.0, ddof
+    )
     return (
         mean,
         margin_of_error,
-        scipy.stats.t.interval(0.95, ddof, loc=np.mean(array), scale=scipy.stats.sem(array)),
+        scipy.stats.t.interval(
+            0.95, ddof, loc=np.mean(array), scale=scipy.stats.sem(array)
+        ),
     )
 
 
-def normalize(x):
+def normalize(x: torch.Tensor) -> torch.Tensor:
+    """Normalizes a vector with its L2-norm.
+
+    Args:
+        x: The vector to be normalized.
+
+    Returns:
+        The normalized vector of the same shape.
+    """
     norm = x.pow(2).sum(1, keepdim=True).pow(1.0 / 2)
     out = x.div(norm)
     return out
 
 
 def prepare_features(
-    support_features,
-    support_targets,
-    support_targets_orig,
-    support_labels,
-    query_features,
-    query_targets,
-    query_targets_orig,
-    query_labels,
-):
+    support_features: np.ndarray,
+    support_targets: np.ndarray,
+    support_targets_orig: np.ndarray,
+    support_labels: np.ndarray,
+    query_features: np.ndarray,
+    query_targets: np.ndarray,
+    query_targets_orig: np.ndarray,
+    query_labels: np.ndarray,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Prepares the features (token-level) from the support/query set (sentence-level).
+
+    Since the support and query sets are sampled on a sentence-level (which means for each
+    to-be-classified token, we just take its whole sentence for contextual embedding), and 
+    NER task is on token-level, in this function, we aim to take only the corresponding 
+    position from the `seq_len`-length embedding for each sample.
+
+    Args:
+        support_features: The embedding of the whole sentence containing certain entitie for \
+            the support set, of shape: `[batch_size * n_ways * k_shots, seq_len, d_hidden]`.\n
+        support_targets: The encoded (i.e. re-ordered from 0) class-ids for the support set, \
+            of shape: `[batch_size * n_ways * k_shots]`.\n
+        support_targets_orig: The (original) class-ids (therefore might not be continuous) \
+            for the support set, of shape: `[batch_size * n_ways * k_shots]`.\n
+        support_labels: The labels of all the tokens in a sentence for the support set, \
+            of shape: `[batch_size * n_ways * k_shots, seq_len, ]`.\n
+        query_features: The embeddings of the sentences containing entities for the query set, \
+            of shape: `[batch_size * n_ways * n_queries, seq_len, d_hidden]`.\n
+        query_targets: The encoded class-ids for the query set, of shape: \
+            `[batch_size * n_ways * k_shots]`.\n
+        query_targets_orig: The (original) class-ids for the query set, of shape: \
+            `[batch_size * n_ways * k_shots]`.
+    
+    Returns:
+        X_support: The contextual embedding of only the wanted tokens for the support set, \
+            of shape: `[batch_size * n_ways * k_shots, ..., h_didden]`.\n
+        y_support: The encoded (because multi-classification is applied later) class-ids for the \
+            support set, of shape `[batch_size * n_ways * k_shots, ...]`.\n
+        X_query: The contextual embedding of only the wanted tokens for the query set, \
+            of shape: `[batch_size * n_ways * n_queries, ..., h_hidden]`.\n
+        y_support: The encoded class-ids for the query set, of shape \
+            `[batch_size * n_ways * k_shots, ...]`.
+    """
     X_support = []
     y_support = []
     for i, (target, target_orig, labels) in enumerate(
         zip(support_targets, support_targets_orig, support_labels)
     ):
+        # take only the position with the wanted tokens
         mask = labels == target_orig
         features = support_features[i, mask, :]
         X_support.append(features)
@@ -66,7 +123,7 @@ def prepare_features(
     X_query = np.concatenate(X_query, axis=0)
     y_query = np.array(y_query)
 
-    return X_support, y_support, X_query, y_query
+    return (X_support, y_support, X_query, y_query)
 
 
 def eval_few_shot_linear_readout(
@@ -82,6 +139,9 @@ def eval_few_shot_linear_readout(
     deterministic: bool = False,
     metrics: Optional[List[str]] = None,
 ):
+    """Performs evaluation using prototypes of contextual embeddings and linear-readout method
+    as classifier top.
+    """
     encoder = encoder.eval()
 
     dataloader = torch.utils.data.DataLoader(
@@ -100,8 +160,10 @@ def eval_few_shot_linear_readout(
 
     metric_scores: Dict[str, List[float]] = {metric: [] for metric in metrics}
     with torch.no_grad():
+        # Each "batch" corresponds to an independent experiment run.
         for batch in tqdm(dataloader):
             # support: [batch_size, n_ways * k_shots, ...]
+            #   with columns: `attention_mask`, `input_ids`, `labels`, `token_type_ids`
             # query: [batch_size, n_ways * n_queries, ...]
             # support_targets: [batch_size, n_ways * k_shots]
             # query_targets: [batch_size, n_ways * n_queries]
@@ -120,12 +182,16 @@ def eval_few_shot_linear_readout(
             query_labels = query["labels"].cpu().numpy()
 
             support = {
-                key: tensor.to(device).view(batch_size * n_ways * k_shots, seq_len).long()
+                key: tensor.to(device)
+                .view(batch_size * n_ways * k_shots, seq_len)
+                .long()
                 for key, tensor in support.items()
                 if key != "labels"
             }
             query = {
-                key: tensor.to(device).view(batch_size * n_ways * n_queries, seq_len).long()
+                key: tensor.to(device)
+                .view(batch_size * n_ways * n_queries, seq_len)
+                .long()
                 for key, tensor in query.items()
                 if key != "labels"
             }

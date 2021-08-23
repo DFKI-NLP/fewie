@@ -18,8 +18,8 @@ class AlbertEncoder(Encoder):
         head_mask=None,
         labels=None,
         inputs_embeds=None,
-#        encoder_hidden_states=None,
- #       encoder_attention_mask=None,
+        #        encoder_hidden_states=None,
+        #       encoder_attention_mask=None,
         output_attentions=None,
         return_dict=None,
     ) -> EncoderOutput:
@@ -31,8 +31,8 @@ class AlbertEncoder(Encoder):
             position_ids=position_ids,
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
- #           encoder_hidden_states=encoder_hidden_states,
-  #          encoder_attention_mask=encoder_attention_mask,
+            #           encoder_hidden_states=encoder_hidden_states,
+            #          encoder_attention_mask=encoder_attention_mask,
             output_attentions=False,
             return_dict=True,
         )
