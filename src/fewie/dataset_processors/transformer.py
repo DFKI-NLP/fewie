@@ -8,6 +8,10 @@ from fewie.dataset_processors.processor import DatasetProcessor
 
 
 class TransformerProcessor(DatasetProcessor):
+    """Provide processing methods that are executed between fetching batch from
+    a `torch.utils.data.Dataset` and feeding this batch to encoder.
+    """
+
     def __init__(
         self,
         tokenizer_name_or_path: str,
@@ -18,6 +22,16 @@ class TransformerProcessor(DatasetProcessor):
         label_all_tokens: bool = False,
         padding: str = "max_length",
     ) -> None:
+        """Args:
+            tokenizer_name_or_path: The source provided by PTM itself, for later tokenizing \
+                words to ids.
+            text_column_name: The column name for text, "tokens" in this case.
+            label_column_name: The column name for NER tag.
+            label_to_id: A dictionary we get from previous steps.
+            max_length: The maximum sequence length.
+            label_all_tokens: Whether we mask the other tokens with -100 or keep the original labels.
+            padding: The padding string applied in the auto-tokenizer.
+        """
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name_or_path)
         self.text_column_name = text_column_name
         self.label_column_name = label_column_name
@@ -33,6 +47,7 @@ class TransformerProcessor(DatasetProcessor):
     def __call__(
         self, dataset: Union[datasets.Dataset, datasets.DatasetDict]
     ) -> Union[datasets.Dataset, datasets.DatasetDict]:
+        """Map the original dataset to tokenized sequnces plus aligned labels."""
         return dataset.map(self.tokenize_and_align_labels, batched=True)
 
     def tokenize_and_align_labels(self, examples):
