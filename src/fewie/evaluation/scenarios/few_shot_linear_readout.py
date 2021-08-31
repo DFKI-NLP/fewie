@@ -89,13 +89,13 @@ def prepare_features(
     
     Returns:
         X_support: The contextual embedding of only the wanted tokens for the support set, \
-            of shape: `[batch_size * n_ways * k_shots, ..., h_didden]`.\n
+            of shape: `[batch_size * n_wanted_tokens, h_didden]`.\n
         y_support: The encoded (because multi-classification is applied later) class-ids for the \
-            support set, of shape `[batch_size * n_ways * k_shots, ...]`.\n
+            support set, of shape `[batch_size * n_wanted_tokens, ]`.\n
         X_query: The contextual embedding of only the wanted tokens for the query set, \
-            of shape: `[batch_size * n_ways * n_queries, ..., h_hidden]`.\n
+            of shape: `[batch_size * n_wanted_tokens, h_hidden]`.\n
         y_support: The encoded class-ids for the query set, of shape \
-            `[batch_size * n_ways * k_shots, ...]`.
+            `[batch_size * n_wanted_tokens, ]`.
     """
     X_support = []
     y_support = []
@@ -122,7 +122,6 @@ def prepare_features(
     y_support = np.array(y_support)
     X_query = np.concatenate(X_query, axis=0)
     y_query = np.array(y_query)
-
     return (X_support, y_support, X_query, y_query)
 
 

@@ -3,9 +3,10 @@ from typing import Union
 import numpy
 import torch
 from sklearn.linear_model import LogisticRegression as LR
+from fewie.evaluation.classifiers.classifier import Classifier
 
 
-class LogisticRegression:
+class LogisticRegression(Classifier):
     def __init__(
         self,
         penalty: str = "l2",
