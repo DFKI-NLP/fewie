@@ -1,0 +1,8 @@
+# @package evaluation.classifier
+
+_target_: fewie.evaluation.classifiers.nearest_neighbor.NearestInstance
+n_neighbors: 1
+weights: uniform
+p: 2
+metric: minkowski
+n_jobs: 1
