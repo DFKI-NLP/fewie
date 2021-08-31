@@ -12,7 +12,7 @@ scenario:
 
 defaults:
   - dataset: conll2003
-  - dataset_processor: albert
-  - encoder: albert
-  - evaluation/dataset: nway_kshot_5_10
-  - evaluation/classifier: nearest_centroid
+  - dataset_processor: bert
+  - encoder: random
+  - evaluation/dataset: nway_kshot_5_1
+  - evaluation/classifier: logistic_regression
