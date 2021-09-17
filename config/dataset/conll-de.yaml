@@ -1,0 +1,6 @@
+# @package dataset
+
+_target_: datasets.load_dataset
+path: ./datasets/conll-de.py
+data_files: ./datasets/conll-de/
+split: test
