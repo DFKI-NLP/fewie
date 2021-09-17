@@ -107,7 +107,7 @@ class CoNLL(datasets.GeneratorBasedBuilder):
                     # organize a record to be written into json
                     record = {
                         "id": str(id),
-                        "tokens": tokens,                     
+                        "tokens": tokens,
                         "ner_tags": ner_tags,
                     }
                     tokens, ner_tags = [], []

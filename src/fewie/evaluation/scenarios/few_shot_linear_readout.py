@@ -63,6 +63,7 @@ def prepare_features(
     query_targets: np.ndarray,
     query_targets_orig: np.ndarray,
     query_labels: np.ndarray,
+    ignore_O: bool = True,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Prepares the features (token-level) from the support/query set (sentence-level).
 
@@ -85,7 +86,8 @@ def prepare_features(
         query_targets: The encoded class-ids for the query set, of shape: \
             `[batch_size * n_ways * k_shots]`.\n
         query_targets_orig: The (original) class-ids for the query set, of shape: \
-            `[batch_size * n_ways * k_shots]`.
+            `[batch_size * n_ways * k_shots]`.\n
+        ignore_O: If `True`, then we remove features with 'O' labels in the query set.
     
     Returns:
         X_support: The contextual embedding of only the wanted tokens for the support set, \
@@ -113,6 +115,9 @@ def prepare_features(
     for i, (target, target_orig, labels) in enumerate(
         zip(query_targets, query_targets_orig, query_labels)
     ):
+        # skip O-tokens if wanted
+        if target_orig == 0:
+            continue
         mask = labels == target_orig
         features = query_features[i, mask, :]
         X_query.append(features)
@@ -134,6 +139,7 @@ def eval_few_shot_linear_readout(
     device: torch.device,
     normalize_embeddings: bool = True,
     confidence: float = 0.95,
+    ignore_O: bool = True,
     ignore_labels: Optional[List[str]] = None,
     deterministic: bool = False,
     metrics: Optional[List[str]] = None,
@@ -225,6 +231,7 @@ def eval_few_shot_linear_readout(
                     query_targets[batch_idx],
                     query_targets_orig[batch_idx],
                     query_labels[batch_idx],
+                    ignore_O=ignore_O,
                 )
 
                 pred_query = classifier(X_support, y_support, X_query)

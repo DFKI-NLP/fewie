@@ -3,6 +3,7 @@ cuda_device: 0
 batch_size: 1
 text_column_name: tokens
 label_column_name: ner_tags
+ignore_O: true
 scenario:
   name: few_shot_linear_readout
   metrics:

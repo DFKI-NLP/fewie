@@ -73,6 +73,7 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
             device=device,
             batch_size=cfg.batch_size,
             metrics=cfg.scenario.metrics,
+            ignore_O=cfg.ignore_O,
         )
     else:
         raise ValueError("Unknown evaluation scenario {}".format(cfg.scenario))
