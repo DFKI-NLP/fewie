@@ -116,7 +116,7 @@ def prepare_features(
         zip(query_targets, query_targets_orig, query_labels)
     ):
         # skip O-tokens if wanted
-        if target_orig == 0:
+        if ignore_O is True and target_orig == 0:
             continue
         mask = labels == target_orig
         features = query_features[i, mask, :]
