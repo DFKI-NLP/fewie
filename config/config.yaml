@@ -3,17 +3,15 @@ cuda_device: 0
 batch_size: 1
 text_column_name: tokens
 label_column_name: ner_tags
-ignore_O: true
 scenario:
   name: few_shot_linear_readout
   metrics:
-    - accuracy
     - f1_micro
     - f1_macro
 
 defaults:
   - dataset: conll2003
   - dataset_processor: bert
-  - encoder: random
+  - encoder: bert
   - evaluation/dataset: nway_kshot_5_1
   - evaluation/classifier: logistic_regression
