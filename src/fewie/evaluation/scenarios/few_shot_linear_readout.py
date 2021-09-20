@@ -127,6 +127,7 @@ def eval_few_shot_linear_readout(
     ignore_labels: Optional[List[str]] = None,
     deterministic: bool = False,
     metrics: Optional[List[str]] = None,
+    f1_include_O: bool = False,
 ):
     """Performs evaluation using prototypes of contextual embeddings and linear-readout method
     as classifier top.
@@ -214,7 +215,8 @@ def eval_few_shot_linear_readout(
 
                 # prepare the entity-label list
                 entity_label_list = set(y_query)
-                entity_label_list.discard(0)
+                if f1_include_O is False:
+                    entity_label_list.discard(0)
 
                 for metric, scorer in scorers.items():
                     score = scorer(y_query, pred_query, labels=list(entity_label_list))

@@ -3,6 +3,7 @@ cuda_device: 0
 batch_size: 1
 text_column_name: tokens
 label_column_name: ner_tags
+f1_include_O: False
 scenario:
   name: few_shot_linear_readout
   metrics:
@@ -12,6 +13,6 @@ scenario:
 defaults:
   - dataset: conll2003
   - dataset_processor: bert
-  - encoder: bert
+  - encoder: random
   - evaluation/dataset: nway_kshot_5_1
   - evaluation/classifier: logistic_regression
