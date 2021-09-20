@@ -33,10 +33,6 @@ def get_metric(metric: str) -> Callable:
     """
     return {
         "accuracy": metrics.accuracy_score,
-        "f1_micro": partial(
-            metrics.f1_score, labels=list(range(1, 9)), average="micro"
-        ),
-        "f1_macro": partial(
-            metrics.f1_score, labels=list(range(1, 9)), average="macro"
-        ),
+        "f1_micro": partial(metrics.f1_score, average="micro"),
+        "f1_macro": partial(metrics.f1_score, average="macro"),
     }[metric]

@@ -6,7 +6,6 @@ label_column_name: ner_tags
 scenario:
   name: few_shot_linear_readout
   metrics:
-    - accuracy
     - f1_micro
     - f1_macro
 

@@ -212,8 +212,12 @@ def eval_few_shot_linear_readout(
 
                 pred_query = classifier(X_support, y_support, X_query)
 
+                # prepare the entity-label list
+                entity_label_list = set(y_query)
+                entity_label_list.discard(0)
+
                 for metric, scorer in scorers.items():
-                    score = scorer(y_query, pred_query)
+                    score = scorer(y_query, pred_query, labels=list(entity_label_list))
                     metric_scores[metric].append(score)
 
     results: Dict[str, Dict[str, float]] = {}
