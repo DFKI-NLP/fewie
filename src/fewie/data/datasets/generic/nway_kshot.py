@@ -79,8 +79,8 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         for key in ignored_classes:
             self.class_indices.pop(key, None)
 
-        # re-organize class-ids after ignoring overly under-represented classes
-        self.classes = list(self.class_indices.keys())
+        # oroginal class-ids after ignoring overly under-represented classes
+        self.classes = sorted(list(self.class_indices.keys()))
 
         logger.info(
             "The following classes have an insufficient number of examples "
@@ -94,7 +94,10 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         )
 
     def _sample_classes(self) -> np.ndarray:
-        """Sample `N` classes from all the existing classes."""
+        """Sample `N` classes from all the existing classes.
+
+        Returns: a N-length list of original class-id with sufficient samples.
+        """
         return np.random.choice(self.classes, self.n_ways, replace=False)
 
     def _sample_indices_and_targets(
@@ -122,10 +125,8 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         """
         support_indices = []
         support_targets = []
-        support_targets_orig = []
         query_indices = []
         query_targets = []
-        query_targets_orig = []
         for idx, cls in enumerate(cls_sampled):
             cls_indices = np.asarray(self.class_indices[cls])
 
@@ -133,23 +134,19 @@ class NwayKshotDataset(torch.utils.data.Dataset):
                 range(cls_indices.shape[0]), self.k_shots, replace=False
             )
             support_indices.append(cls_indices[support_ids])
-            support_targets.append([idx] * self.k_shots)
-            support_targets_orig.append([cls] * self.k_shots)
+            support_targets.append([cls] * self.k_shots)
 
             # make sure support and query have no overlap for each sampled class
             query_ids = np.setxor1d(np.arange(cls_indices.shape[0]), support_ids)
             query_ids = np.random.choice(query_ids, self.n_queries, replace=False)
             query_indices.append(cls_indices[query_ids])
-            query_targets.append([idx] * self.n_queries)
-            query_targets_orig.append([cls] * self.n_queries)
+            query_targets.append([cls] * self.n_queries)
 
         return (
             support_indices,
             support_targets,
-            support_targets_orig,
             query_indices,
             query_targets,
-            query_targets_orig,
         )
 
     def __getitem__(self, item):
@@ -174,21 +171,17 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         (
             support_indices,
             support_targets,
-            support_targets_orig,
             query_indices,
             query_targets,
-            query_targets_orig,
         ) = self._sample_indices_and_targets(cls_sampled)
 
         # To make the indices work for fetching data from the original dataset, we need to
         # convert the native List[int] into numpy array.
         support_indices = np.concatenate(support_indices).flatten()
         support_targets = np.concatenate(support_targets).flatten()
-        support_targets_orig = np.concatenate(support_targets_orig).flatten()
 
         query_indices = np.concatenate(query_indices).flatten()
         query_targets = np.concatenate(query_targets).flatten()
-        query_targets_orig = np.concatenate(query_targets_orig).flatten()
 
         with self.dataset.formatted_as(type="numpy", columns=self.columns):
             support = self.dataset[support_indices]
@@ -197,10 +190,8 @@ class NwayKshotDataset(torch.utils.data.Dataset):
         return (
             support,
             support_targets,
-            support_targets_orig,
             query,
             query_targets,
-            query_targets_orig,
         )
 
     def __len__(self):
