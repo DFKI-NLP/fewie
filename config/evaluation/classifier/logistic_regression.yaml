@@ -1,4 +1,4 @@
-# @package _group_
+# @package evaluation.classifier
 
 _target_: fewie.evaluation.classifiers.logistic_regression.LogisticRegression
 C: 1.0

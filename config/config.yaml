@@ -3,10 +3,10 @@ cuda_device: 0
 batch_size: 1
 text_column_name: tokens
 label_column_name: ner_tags
+f1_include_O: False
 scenario:
   name: few_shot_contrastive_pretraining
   metrics:
-    - accuracy
     - f1_micro
     - f1_macro
 

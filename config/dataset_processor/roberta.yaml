@@ -1,8 +1,7 @@
-# @package _group_
+# @package dataset_processor
 
 _target_: fewie.dataset_processors.roberta.RobertaProcessor
 tokenizer_name_or_path: roberta-base
 max_length: 128
 label_all_tokens: False
 add_prefix_space: True
-

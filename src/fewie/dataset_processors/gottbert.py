@@ -17,16 +17,18 @@ class GottBERTProcessor(DatasetProcessor):
         max_length: int = 128,
         label_all_tokens: bool = False,
         padding: str = "max_length",
-        add_prefix_space: bool = True
+        add_prefix_space: bool = True,
     ) -> None:
-        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name_or_path, add_prefix_space=True)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            tokenizer_name_or_path, add_prefix_space=True
+        )
         self.text_column_name = text_column_name
         self.label_column_name = label_column_name
         self.label_to_id = label_to_id
         self.max_length = max_length
         self.label_all_tokens = label_all_tokens
         self.padding = padding
-        self.prefix_space=add_prefix_space
+        self.prefix_space = add_prefix_space
 
     @property
     def feature_columns(self) -> List[str]:
@@ -45,8 +47,8 @@ class GottBERTProcessor(DatasetProcessor):
             truncation=True,
             # We use this argument because the texts in our dataset are lists of words (with a label for each word).
             is_split_into_words=True,
-	    # roberta requirement:
-            #add_prefix_space=self.prefix_space
+            # roberta requirement:
+            # add_prefix_space=self.prefix_space
         )
 
         labels = []
@@ -66,11 +68,12 @@ class GottBERTProcessor(DatasetProcessor):
                 # the label_all_tokens flag.
                 else:
                     label_ids.append(
-                        self.label_to_id[label[word_idx]] if self.label_all_tokens else -100
+                        self.label_to_id[label[word_idx]]
+                        if self.label_all_tokens
+                        else -100
                     )
                 previous_word_idx = word_idx
 
             labels.append(label_ids)
         tokenized_inputs["labels"] = labels
         return tokenized_inputs
-

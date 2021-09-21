@@ -1,0 +1,4 @@
+# @package evaluation.classifier
+
+_target_: fewie.evaluation.classifiers.nearest_neighbor.NearestCentroid
+metric: euclidean  # or "manhattan"
