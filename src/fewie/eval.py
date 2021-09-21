@@ -9,8 +9,8 @@ from fewie.data.datasets.utils import get_label_to_id
 from fewie.evaluation.scenarios.few_shot_linear_readout import (
     eval_few_shot_linear_readout,
 )
-from fewie.evaluation.scenarios.few_shot_contrastive_pretraining import (
-    eval_few_show_contrastive_pretraining,
+from fewie.evaluation.scenarios.few_shot_contrastive_training import (
+    eval_few_show_contrastive_training,
 )
 from fewie.evaluation.utils import seed_everything
 
@@ -80,7 +80,7 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
             f1_include_O=cfg.f1_include_O,
         )
 
-    elif cfg.scenario.name == "few_shot_contrastive_pretraining":
+    elif cfg.scenario.name == "few_shot_contrastive_training":
         few_shot_dataset = instantiate(
             cfg.evaluation.dataset,
             dataset=processed_dataset,
@@ -88,7 +88,7 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
             label_column_name=cfg.label_column_name,
         )
 
-        evaluation_results = eval_few_show_contrastive_pretraining(
+        evaluation_results = eval_few_show_contrastive_training(
             classifier=classifier,
             encoder=encoder,
             dataset=processed_dataset,
@@ -99,6 +99,7 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
             learning_rate=cfg.learning_rate,
             batch_size=cfg.batch_size,
             metrics=cfg.scenario.metrics,
+            f1_include_O=cfg.f1_include_O,
         )
     else:
         raise ValueError("Unknown evaluation scenario {}".format(cfg.scenario))

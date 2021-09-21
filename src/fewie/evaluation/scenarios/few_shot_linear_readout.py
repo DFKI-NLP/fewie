@@ -81,6 +81,8 @@ def prepare_features(
             of shape: `[batch_size * n_ways * n_queries, seq_len, d_hidden]`.\n
         query_targets: The (original) class-ids for the query set, of shape: \
             `[batch_size * n_ways * k_shots]`.\n
+        query_labels: The labels of all the tokens in a sentence for the support set, \
+            of shape: `[batch_size * n_ways * k_shots, seq_len, ]`.\n
     
     Returns:
         X_support: The contextual embedding of only the wanted tokens for the support set, \

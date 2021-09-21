@@ -351,8 +351,8 @@ class ContrastiveNwayKshotDataset(NwayKshotDataset):
         List[List[int]],
     ]:
         contrastive_indices, contrastive_targets, contrastive_targets_orig = [], [], []
-        support_indices, support_targets, support_targets_orig = [], [], []
-        query_indices, query_targets, query_targets_orig = [], [], []
+        support_indices, support_targets = [], []
+        query_indices, query_targets = [], []
 
         for idx, cls in enumerate(cls_sampled):
             cls_indices = np.asarray(self.class_indices[cls])
@@ -369,14 +369,12 @@ class ContrastiveNwayKshotDataset(NwayKshotDataset):
             # sample support and query set as base class does
             support_ids = positive_ids_pool[: self.k_shots]
             support_indices.append(cls_indices[support_ids])
-            support_targets.append([idx] * self.k_shots)
-            support_targets_orig.append([cls] * self.k_shots)
+            support_targets.append([cls] * self.k_shots)
 
             query_ids = np.setxor1d(np.arange(cls_indices.shape[0]), support_ids)
             query_ids = np.random.choice(query_ids, self.n_queries, replace=False)
             query_indices.append(cls_indices[query_ids])
-            query_targets.append([idx] * self.n_queries)
-            query_targets_orig.append([cls] * self.n_queries)
+            query_targets.append([cls] * self.n_queries)
 
         # build negative pairs
         for idx, cls in enumerate(cls_sampled):
@@ -395,10 +393,8 @@ class ContrastiveNwayKshotDataset(NwayKshotDataset):
             contrastive_targets_orig,
             support_indices,
             support_targets,
-            support_targets_orig,
             query_indices,
             query_targets,
-            query_targets_orig,
         )
 
     def __getitem__(self, item):
@@ -413,10 +409,8 @@ class ContrastiveNwayKshotDataset(NwayKshotDataset):
             contrastive_targets_orig,
             support_indices,
             support_targets,
-            support_targets_orig,
             query_indices,
             query_targets,
-            query_targets_orig,
         ) = self._sample_indices_and_targets(cls_sampled)
 
         contrastive_left_indices = [
@@ -430,11 +424,9 @@ class ContrastiveNwayKshotDataset(NwayKshotDataset):
 
         support_indices = np.concatenate(support_indices).flatten()
         support_targets = np.concatenate(support_targets).flatten()
-        support_targets_orig = np.concatenate(support_targets_orig).flatten()
 
         query_indices = np.concatenate(query_indices).flatten()
         query_targets = np.concatenate(query_targets).flatten()
-        query_targets_orig = np.concatenate(query_targets_orig).flatten()
 
         with self.dataset.formatted_as(type="numpy", columns=self.columns):
             contrastive_left = self.dataset[contrastive_left_indices]
@@ -449,8 +441,6 @@ class ContrastiveNwayKshotDataset(NwayKshotDataset):
             contrastive_targets_orig,
             support,
             support_targets,
-            support_targets_orig,
             query,
             query_targets,
-            query_targets_orig,
         )

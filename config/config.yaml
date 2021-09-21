@@ -5,7 +5,7 @@ text_column_name: tokens
 label_column_name: ner_tags
 f1_include_O: False
 scenario:
-  name: few_shot_contrastive_pretraining
+  name: few_shot_contrastive_training
   metrics:
     - f1_micro
     - f1_macro

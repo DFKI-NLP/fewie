@@ -21,7 +21,7 @@ from typing import Optional, List, Dict
 import logging
 
 
-def eval_few_show_contrastive_pretraining(
+def eval_few_show_contrastive_training(
     dataset: datasets.Dataset,
     contrastive_few_shot_dataset: ContrastiveNwayKshotDataset,
     encoder: Encoder,
@@ -34,6 +34,7 @@ def eval_few_show_contrastive_pretraining(
     normalize_embeddings: bool = True,
     confidence: float = 0.95,
     metrics: Optional[List[str]] = None,
+    f1_include_O: bool = False,
 ):
     if metrics is None:
         metrics = ["accuracy"]
@@ -69,10 +70,8 @@ def eval_few_show_contrastive_pretraining(
             contrastive_targets_orig,
             support,
             support_targets,
-            support_targets_orig,
             query,
             query_targets,
-            query_targets_orig,
         ) = batch
 
         batch_size, _, seq_len = support["input_ids"].shape
@@ -111,7 +110,7 @@ def eval_few_show_contrastive_pretraining(
                 contrastive_left, contrastive_right, pos_left, pos_right
             )
             loss = hinge_contrastive_loss(contrastive_embedding, contrastive_targets)
-            #loss = n_pair_loss(contrastive_embedding, contrastive_targets_orig)
+            # loss = n_pair_loss(contrastive_embedding, contrastive_targets_orig)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -155,25 +154,25 @@ def eval_few_show_contrastive_pretraining(
             support_targets = support_targets.numpy()
             query_targets = query_targets.numpy()
 
-            support_targets_orig = support_targets_orig.numpy()
-            query_targets_orig = query_targets_orig.numpy()
-
             for batch_idx in range(support_features.shape[0]):
                 X_support, y_support, X_query, y_query = prepare_features(
                     support_features[batch_idx],
                     support_targets[batch_idx],
-                    support_targets_orig[batch_idx],
                     support_labels[batch_idx],
                     query_features[batch_idx],
                     query_targets[batch_idx],
-                    query_targets_orig[batch_idx],
                     query_labels[batch_idx],
                 )
 
                 pred_query = classifier(X_support, y_support, X_query)
 
+                # prepare the entity-label list
+                entity_label_list = set(y_query)
+                if f1_include_O is False:
+                    entity_label_list.discard(0)
+
                 for metric, scorer in scorers.items():
-                    score = scorer(y_query, pred_query)
+                    score = scorer(y_query, pred_query, labels=list(entity_label_list))
                     metric_scores[metric].append(score)
 
     results: Dict[str, Dict[str, float]] = {}
