@@ -1,6 +1,4 @@
-import torch
 from transformers import AutoTokenizer, AutoModel
-
 from tqdm import tqdm
 import csv
 
@@ -45,7 +43,7 @@ if __name__ == "__main__":
 
     # write into .csv file
     column_names = records[0].keys()
-    with open("encoder-info.csv", "w", newline="") as fw:
+    with open("encoder_info.csv", "w", newline="") as fw:
         dict_writer = csv.DictWriter(fw, column_names)
         dict_writer.writeheader()
         dict_writer.writerows(records)
