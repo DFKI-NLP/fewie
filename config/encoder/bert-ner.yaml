@@ -1,6 +1,6 @@
 # @package encoder
 
 _target_: fewie.encoders.transformer.TransformerEncoder
-model_name_or_path: dslim/bert-base-NER
+model_name_or_path: dslim/bert-base-NER-uncased 
 # This model is a bert-base-cased model that was fine-tuned on the English version 
 # of the standard CoNLL-2003 Named Entity Recognition dataset.
