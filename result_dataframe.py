@@ -7,6 +7,11 @@ from glob import glob
 from typing import Dict, List, Any, Optional
 import warnings
 
+DATASET_ALIASES = {
+    "few-nerd": "fewnerd",
+    "wnut_17": "wnut17",
+    "germeval_14": "germeval",
+}
 
 ENCODER_NAMES = {
     "albert-base-v2": "albert",
@@ -59,6 +64,8 @@ def parse_hydra_config(config_path: str) -> Optional[Dict[str, Any]]:
     label_column = str(dict_from_yaml["label_column_name"])
 
     dataset = dataset.strip("/").split("/")[-1].split(".")[0]
+    if dataset in DATASET_ALIASES:
+        dataset = DATASET_ALIASES[dataset]
     readout = READOUT_NAMES[readout.split(".")[-1]]
 
     if dict_from_yaml["encoder"]["_target_"].split(".")[-1] == "RandomEncoder":
