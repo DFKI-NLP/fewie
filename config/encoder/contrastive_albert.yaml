@@ -1,5 +1,5 @@
 # @package encoder
 _target_: fewie.encoders.contrastive.ContrastiveTransformerEncoder
-model_name_or_path: bert-base-uncased
+model_name_or_path: albert-base-v2
 # options: bert-base-uncased, xlnet-base-cased, SpanBERT/spanbert-base-cased
 #          albert-base-v2, roberta-base

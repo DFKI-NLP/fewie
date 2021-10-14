@@ -245,7 +245,9 @@ if __name__ == "__main__":
         & (df["readout"] == "LR")
     ]
     new_df.sort_values(["dataset", "label_column", "kshots", "encoder"], inplace=True)
-    new_df.drop_duplicates(["dataset", "label_column", "kshots", "encoder"], keep="last", inplace=True)
+    new_df.drop_duplicates(
+        ["dataset", "label_column", "kshots", "encoder"], keep="last", inplace=True
+    )
     print(
         new_df[
             ["dataset", "label_column", "kshots", "encoder", "f1_micro", "f1_micro_pm"]
@@ -285,7 +287,9 @@ if __name__ == "__main__":
         & (df["readout"] == "LR")
     ]
     new_df.sort_values(["dataset", "label_column", "kshots", "encoder"], inplace=True)
-    new_df.drop_duplicates(["dataset", "label_column", "kshots", "encoder"], keep="last", inplace=True)
+    new_df.drop_duplicates(
+        ["dataset", "label_column", "kshots", "encoder"], keep="last", inplace=True
+    )
     print(
         new_df[
             [
