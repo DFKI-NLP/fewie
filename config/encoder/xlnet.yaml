@@ -1,4 +1,4 @@
 # @package encoder
 
 _target_: fewie.encoders.transformer.TransformerEncoder
-model_name_or_path: xlnet-base-cased 
+model_name_or_path: xlnet-base-cased
