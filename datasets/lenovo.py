@@ -89,6 +89,7 @@ class Lenovo(datasets.GeneratorBasedBuilder):
 
     def _generate_examples(self, filepath=None):
         """Yields examples."""
+        filepath = filepath["train"][0]
         with open(filepath, encoding="utf-8") as f:
             for line in f.readlines():
                 record = json.loads(line)
