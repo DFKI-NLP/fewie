@@ -28,7 +28,7 @@ ENCODER_NAMES = {
     "xlnet-base-cased": "xlnet",
 }
 
-OUTDATED_ENCODER_NAMES = {
+DEPRECATED_ENCODER_NAMES = {
     "bert-base-cased": "bert-cased",
     "dslim/bert-base-NER": "bert-conll-cased",
     "deepset/bert-base-cased-squad2": "bert-squad-cased",
@@ -158,7 +158,10 @@ def logdir_to_dict(dir_path: str) -> Optional[Dict[str, Any]]:
         date, time = dir_path_split[-3], dir_path_split[-2]
     elif dir_path_split[-3] == "outputs":
         date, time = dir_path_split[-2], dir_path_split[-1]
-    timestamp = date + "/" + time
+    year, month, day = date.split("-")
+    hour, minute, second = time.split("-")
+    timestamp = "{}-{}-{}T{}:{}:{}".format(year, month, day, hour, minute, second)
+    timestamp = pd.to_datetime(timestamp)
 
     # merge all the info into one dict
     if config is not None and result is not None:
