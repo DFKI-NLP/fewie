@@ -16,7 +16,7 @@ def evaluate_config(cfg: DictConfig) -> Dict[str, Any]:
     """Evaluates with the given hydra configuration.
 
     Args:
-        cfg: Hydra-format configurationgiven in a dict.
+        cfg: Hydra-format configuration given in a dict.
 
     Returns:
         Evaluation result given in a dict, containing f1-micro and f1-macro scores. For each

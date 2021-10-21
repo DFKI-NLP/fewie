@@ -14,22 +14,22 @@ DATASET_ALIASES = {
 }
 
 ENCODER_NAMES = {
-    "albert-base-v2": "albert",
-    "dbmdz/bert-base-german-uncased": "bert-german",
-    "textattack/bert-base-uncased-MNLI": "bert-mnli",
-    "dslim/bert-base-NER-uncased": "bert-conll",
-    "vblagoje/bert-english-uncased-finetuned-pos": "bert-pos",
-    "csarron/bert-base-uncased-squad-v1": "bert-squad",
     "bert-base-uncased": "bert",
-    "uklfr/gottbert-base": "gottbert",
+    "bert-base-cased": "bert-cased",
+    "albert-base-v2": "albert",
     "roberta-base": "roberta",
     "SpanBERT/spanbert-base-cased": "spanbert",
-    "xlm-roberta-base": "xlm",
     "xlnet-base-cased": "xlnet",
+    "dbmdz/bert-base-german-uncased": "bert-german",
+    "uklfr/gottbert-base": "gottbert",
+    "xlm-roberta-base": "xlm",
+    "vblagoje/bert-english-uncased-finetuned-pos": "bert-pos",
+    "textattack/bert-base-uncased-MNLI": "bert-mnli",
+    "csarron/bert-base-uncased-squad-v1": "bert-squad",
+    "dslim/bert-base-NER-uncased": "bert-conll",
 }
 
 DEPRECATED_ENCODER_NAMES = {
-    "bert-base-cased": "bert-cased",
     "dslim/bert-base-NER": "bert-conll-cased",
     "deepset/bert-base-cased-squad2": "bert-squad-cased",
 }
