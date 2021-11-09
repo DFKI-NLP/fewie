@@ -20,7 +20,7 @@ ENCODER_NAMES = {
     "roberta-base": "roberta",
     "SpanBERT/spanbert-base-cased": "spanbert",
     "xlnet-base-cased": "xlnet",
-    "dbmdz/bert-base-german-uncased": "bert-german",
+    "bert-base-german-cased": "bert-german",
     "uklfr/gottbert-base": "gottbert",
     "xlm-roberta-base": "xlm",
     "vblagoje/bert-english-uncased-finetuned-pos": "bert-pos",
@@ -30,6 +30,7 @@ ENCODER_NAMES = {
 }
 
 DEPRECATED_ENCODER_NAMES = {
+    "dbmdz/bert-base-german-uncased": "bert-german-uncased",
     "dslim/bert-base-NER": "bert-conll-cased",
     "deepset/bert-base-cased-squad2": "bert-squad-cased",
 }

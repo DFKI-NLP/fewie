@@ -12,7 +12,7 @@ MODEL_NAMES = [
     "SpanBERT/spanbert-base-cased",
     "xlnet-base-cased",
     # for German
-    "dbmdz/bert-base-german-uncased",
+    "bert-base-german-cased",
     "uklfr/gottbert-base",
     "xlm-roberta-base",
 ]

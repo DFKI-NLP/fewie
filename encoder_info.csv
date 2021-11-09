@@ -5,6 +5,6 @@ albert-base-v2,30000,11683584
 roberta-base,50265,124645632
 SpanBERT/spanbert-base-cased,28996,108310272
 xlnet-base-cased,32000,116718336
-dbmdz/bert-base-german-uncased,31102,109927680
+bert-base-german-cased,30000,109081344
 uklfr/gottbert-base,52009,125985024
 xlm-roberta-base,250002,278043648
