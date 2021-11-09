@@ -67,19 +67,19 @@ class CoNLL(datasets.GeneratorBasedBuilder):
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "filepath": os.path.join(self.config.data_files, "deuutf.train")
+                    "filepath": os.path.join(self.config.data_files, "deuutf.train.txt")
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.TEST,
                 gen_kwargs={
-                    "filepath": os.path.join(self.config.data_files, "deuutf.testa")
+                    "filepath": os.path.join(self.config.data_files, "deuutf.testa.txt")
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "filepath": os.path.join(self.config.data_files, "deuutf.testb")
+                    "filepath": os.path.join(self.config.data_files, "deuutf.testb.txt")
                 },
             ),
         ]
