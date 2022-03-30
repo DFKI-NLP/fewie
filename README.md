@@ -100,20 +100,14 @@ python evaluate.py \
 
 This should produce an output similar to this:
 ```json
-{'accuracy': {
-   'mean': 0.5341624247825408, 
-   'margin_of_error': 0.019547702016139496,
-   'confidence': 0.95
- }, 
- 'f1_micro': {
-   'mean': 0.5341624247825408,
-   'margin_of_error': 0.019547702016139496,
-   'confidence': 0.95
- }, 
- 'f1_macro': {
-   'mean': 0.23580803312291498,
-   'margin_of_error': 0.010821995530256272, 
-   'confidence': 0.95}
+{"f1_micro": 
+  {"mean": 0.22021196408281052, 
+    "margin_of_error": 0.018079245331949295, 
+    "confidence": 0.95}, 
+  "f1_macro": {
+    "mean": 0.15039496182777168, 
+    "margin_of_error": 0.01310293346782576, 
+    "confidence": 0.95}
 }
 ```
 
