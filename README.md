@@ -98,12 +98,12 @@ python evaluate.py \
     evaluation/dataset=nway_kshot_5_1
 ```
 
-# Usage on GPU cluster with usrun.sh
-```
-./usrun.sh -p <profile> --gpus=<n> container-env-fewie.sh \
-    python evaluate.py \
-        dataset=conll2003 \
-        dataset_processor=bert \
-        encoder=bert \
-        evaluation/dataset=nway_kshot_5_1
+This should produce an output similar to this:
+```json
+{'accuracy': {
+    'mean': 0.5341624247825408, 'margin_of_error': 0.019547702016139496, 'confidence': 0.95
+    }, 
+    'f1_micro': {'mean': 0.5341624247825408, 'margin_of_error': 0.019547702016139496, 'confidence': 0.95
+    }, 
+    'f1_macro': {'mean': 0.23580803312291498, 'margin_of_error': 0.010821995530256272, 'confidence': 0.95}}
 ```
