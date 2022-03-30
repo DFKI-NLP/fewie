@@ -101,11 +101,20 @@ python evaluate.py \
 This should produce an output similar to this:
 ```json
 {'accuracy': {
-    'mean': 0.5341624247825408, 'margin_of_error': 0.019547702016139496, 'confidence': 0.95
-    }, 
-    'f1_micro': {'mean': 0.5341624247825408, 'margin_of_error': 0.019547702016139496, 'confidence': 0.95
-    }, 
-    'f1_macro': {'mean': 0.23580803312291498, 'margin_of_error': 0.010821995530256272, 'confidence': 0.95}}
+   'mean': 0.5341624247825408, 
+   'margin_of_error': 0.019547702016139496,
+   'confidence': 0.95
+ }, 
+ 'f1_micro': {
+   'mean': 0.5341624247825408,
+   'margin_of_error': 0.019547702016139496,
+   'confidence': 0.95
+ }, 
+ 'f1_macro': {
+   'mean': 0.23580803312291498,
+   'margin_of_error': 0.010821995530256272, 
+   'confidence': 0.95}
+}
 ```
 
 ## Datasets
@@ -120,3 +129,12 @@ described here: https://github.com/yuchenlin/OntoNotes-5.0-NER-BIO.
 Create a single zip file containing `onto.train.ner`, `onto.development.ner`, and 
 `onto.test.ner`. Edit `datasets/ontonotes.py` and change the `_URL` to point to this
 zip file.
+
+### CoNLL-2003 German
+We share the revised version as provided by the shared task organiser
+in 2006 with more consistent annotations (as described here: https://www.clips.uantwerpen.be/conll2003/ner/).
+
+### Zhang et al. eCommerce NER dataset
+We provide the version shared by the authors in the file `datasets/lenovo.json`.
+
+
