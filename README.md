@@ -107,19 +107,3 @@ This should produce an output similar to this:
     }, 
     'f1_macro': {'mean': 0.23580803312291498, 'margin_of_error': 0.010821995530256272, 'confidence': 0.95}}
 ```
-
-# Usage on GPU cluster with usrun.sh
-```
-./usrun.sh -p <profile> --gpus=<n> container-env-fewie.sh \
-    python evaluate.py \
-        dataset=conll2003 \
-        dataset_processor=bert \
-        encoder=bert \
-        evaluation/dataset=nway_kshot_5_1
-```
-
-# TODOs
-- [x] Clarify the best approach to produce prototypes given token embeddings. Input -> Encoder -> embeddings [N x K x d_hidden] -> Pooling (select and aggregate token embeddings for each N) -> Prototypes [N x d_hidden]
-    - Solution 1: Encoder with a forward and pooling step that produces the prototypes (if mask, or labels plus label id, are provided) and returns prototypes [N x d_hidden] (optional) and final hidden states [N x K x d_hidden].
-- [x] Clarify the evaluation setting, as the survey paper is missing a lot of important details.
-- In the evaluation scenario, rename ``classifier`` to ``pooling`` to better describe its purpose.
