@@ -4,7 +4,15 @@ from tqdm import tqdm
 
 
 _CITATION = """
-
+@article{weischedel_ontonotes_2013,
+  title={Ontonotes release 5.0 ldc2013t19},
+  author={Weischedel, Ralph and Palmer, Martha and Marcus, Mitchell and Hovy, Eduard and Pradhan,
+  Sameer and Ramshaw, Lance and Xue, Nianwen and Taylor, Ann and Kaufman, Jeff and Franchini,
+  Michelle and others},
+  journal={Linguistic Data Consortium, Philadelphia, PA},
+  volume={23},
+  year={2013}
+}
 """
 
 _DESCRIPTION = """
