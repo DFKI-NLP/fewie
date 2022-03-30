@@ -19,7 +19,7 @@ _DESCRIPTION = """
 OntoNotes 5.0
 """
 
-_URL = "https://cloud.dfki.de/owncloud/index.php/s/S8pB4xTBZ3zQEic/download/OntoNotes-5.0-NER-BIO.zip"
+_URL = "path/to/OntoNotes-5.0-NER-BIO.zip"
 
 _LICENCE = "LDC User Agreement for Non-Members"
 

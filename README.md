@@ -107,3 +107,16 @@ This should produce an output similar to this:
     }, 
     'f1_macro': {'mean': 0.23580803312291498, 'margin_of_error': 0.010821995530256272, 'confidence': 0.95}}
 ```
+
+## Datasets
+
+### OntoNotes
+Due to licensing restriction, you have to obtain a copy of OntoNotes 5.0 
+from LDC yourself: https://catalog.ldc.upenn.edu/LDC2013T19. 
+
+Preprocess the download to obtain a BIO-tagged version of the dataset as 
+described here: https://github.com/yuchenlin/OntoNotes-5.0-NER-BIO.
+
+Create a single zip file containing `onto.train.ner`, `onto.development.ner`, and 
+`onto.test.ner`. Edit `datasets/ontonotes.py` and change the `_URL` to point to this
+zip file.
