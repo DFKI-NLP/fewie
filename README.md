@@ -8,14 +8,14 @@ Install [PyTorch](https://pytorch.org/get-started).
 
 ### From source
 ```bash
-git clone https://github.com/ChristophAlt/fewie
+git clone https://github.com/DFKI-NLP/fewie
 cd fewie
 pip install .
 ```
 
 ### For development
 ```bash
-git clone https://github.com/ChristophAlt/fewie
+git clone https://github.com/DFKI-NLP/fewie
 cd fewie
 pip install -e .
 ```
