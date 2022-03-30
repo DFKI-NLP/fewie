@@ -3,7 +3,28 @@ import json
 
 
 _CITATION = """
-NA.
+@inproceedings{zhang-etal-2020-bootstrapping,
+    title = "Bootstrapping Named Entity Recognition in {E}-Commerce with Positive Unlabeled Learning",
+    author = "Zhang, Hanchu  and
+      Hennig, Leonhard  and
+      Alt, Christoph  and
+      Hu, Changjian  and
+      Meng, Yao  and
+      Wang, Chao",
+    booktitle = "Proceedings of The 3rd Workshop on e-Commerce and NLP",
+    month = jul,
+    year = "2020",
+    address = "Seattle, WA, USA",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2020.ecnlp-1.1",
+    doi = "10.18653/v1/2020.ecnlp-1.1",
+    pages = "1--6",
+    abstract = "In this work, we introduce a bootstrapped, iterative NER model that integrates a PU
+    learning algorithm for recognizing named entities in a low-resource setting. Our approach combines
+    dictionary-based labeling with syntactically-informed label expansion to efficiently enrich the
+    seed dictionaries. Experimental results on a dataset of manually annotated e-commerce product
+    descriptions demonstrate the effectiveness of the proposed framework.",
+}
 """
 
 _DESCRIPTION = """
