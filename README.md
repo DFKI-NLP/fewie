@@ -1,27 +1,27 @@
 # FewIE: Few-Shot Named Entity Recognition
 This is the official implementation of our paper "FewIE"-paper: *A Comparative Study of Pre-trained Encoders for Low-Resource Named Entity Recognition*.
 
-![Evaluation framework of few-shot NER](./docs/framework.png)
+![Evaluation framework of few-shot NER](./docs/few_eval_framework.png)
 
 ## Table of Contents
 - [Introduction](#introduction)
-- [Overview](#overview)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Datasets](#datasets)
-- [Citation](#citation)
-- [License](#license)
+- [Overview](#-overview)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Datasets](#-datasets)
+- [Citation](#-citation)
+- [License](#-license)
 
 ## Introduction
-This repository is the implementation of our **encoder-readout**  framework, which is on evaluating pre-trained encoders on the task of few-shot NER, across up to now 8 English and 3 German datasets.
+This repository is the implementation of our **encoder-readout**  framework, which is on evaluating pre-trained encoders on the task of few-shot NER, across (up to now) 8 English and 3 German datasets.
 
 ## 🔭&nbsp; Overview
 |**Path**|**Description**|
 |---|---|
-|[configs/](./configs/)|This directory contains the Hydra config files that specify pre-defined settings.|
-|[datasets/](./data/)|This directory where the user should put their data files.|
+|[config/](./config/)|This directory contains the Hydra config files that specify pre-defined settings.|
+|[datasets/](./datasets/)|This directory where the user should put their data files.|
 |[docs/](./docs/)|This directory contains the auxiliary files for documentation, such as the figure(s)presented in README.|
-|[src/fewie/](./src/)|This directory is the package to be installed, which contains the source code of our implementation.|
+|[src/fewie/](./src/fewie/)|This directory is the package to be installed, which contains the source code of our implementation.|
 
 ## 🚀&nbsp; Installation
 ### From source
