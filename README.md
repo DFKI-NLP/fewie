@@ -1,11 +1,29 @@
-# FewIE: Few-shot named entity recognition
+# FewIE: Few-Shot Named Entity Recognition
+This is the official implementation of our paper "FewIE"-paper: *A Comparative Study of Pre-trained Encoders for Low-Resource Named Entity Recognition*.
+
+![Evaluation framework of few-shot NER](./docs/framework.png)
+
+## Table of Contents
+- [Introduction](#introduction)
+- [Overview](#overview)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Datasets](#datasets)
+- [Citation](#citation)
+- [License](#license)
+
+## Introduction
+This repository is the implementation of our **encoder-readout**  framework, which is on evaluating pre-trained encoders on the task of few-shot NER, across up to now 8 English and 3 German datasets.
+
+## 🔭&nbsp; Overview
+|**Path**|**Description**|
+|---|---|
+|[configs/](./configs/)|This directory contains the Hydra config files that specify pre-defined settings.|
+|[datasets/](./data/)|This directory where the user should put their data files.|
+|[docs/](./docs/)|This directory contains the auxiliary files for documentation, such as the figure(s)presented in README.|
+|[src/fewie/](./src/)|This directory is the package to be installed, which contains the source code of our implementation.|
 
 ## 🚀&nbsp; Installation
-
-### Prerequisites
-
-Install [PyTorch](https://pytorch.org/get-started).
-
 ### From source
 ```bash
 git clone https://github.com/DFKI-NLP/fewie
@@ -111,7 +129,7 @@ This should produce an output similar to this:
 }
 ```
 
-## Datasets
+## 🔎&nbsp; Datasets
 
 ### OntoNotes
 Due to licensing restriction, you have to obtain a copy of OntoNotes 5.0 
@@ -131,4 +149,23 @@ in 2006 with more consistent annotations (as described here: https://www.clips.u
 ### Zhang et al. eCommerce NER dataset
 We provide the version shared by the authors in the file `datasets/lenovo.json`.
 
+## 📚&nbsp; Citation
+```
+@inproceedings{chen-etal-2022-fewie,
+    title = "A Comparative Study of Pre-trained Encoders for Low-Resource Named Entity Recognition",
+    author = "Chen, Yuxuan and
+      Mikkelsen, Jonas and
+      Binder, Arne and
+      Alt, Christoph and
+      Hennig, Leonhard",
+    booktitle = "Proceedings of the 7th Workshop on Representation Learning for NLP",
+    month = may,
+    year = "2022",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    abstract = "Pre-trained language models (PLM) are effective components of few-shot named entity recognition (NER) approaches when augmented with continued pre-training on task-specific out-of-domain data or fine-tuning on in-domain data. However, their performance in low-resource scenarios, where such data is not available, remains an open question. We introduce an encoder evaluation framework, and use it to systematically compare the performance of state-of-the-art pre-trained representations on the task of low-resource NER. We analyze a wide range of encoders pre-trained with different strategies, model architectures, intermediate-task fine-tuning, and contrastive learning. Our experimental results across ten benchmark NER datasets in English and German show that encoder performance varies significantly, suggesting that the choice of encoder for a specific low-resource scenario needs to be carefully evaluated.",
+}
+```
 
+## 📘&nbsp; License
+FewIE is released under the terms of the [MIT License](./docs/LICENSE).
