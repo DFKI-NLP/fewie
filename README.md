@@ -168,4 +168,4 @@ We provide the version shared by the authors in the file `datasets/lenovo.json`.
 ```
 
 ## 📘&nbsp; License
-FewIE is released under the terms of the [MIT License](./docs/LICENSE).
+FewIE is released under the terms of the [MIT License](./LICENSE.txt).
