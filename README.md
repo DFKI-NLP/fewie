@@ -1,5 +1,5 @@
 # FewIE: Few-Shot Named Entity Recognition
-This is the official implementation of our paper "FewIE"-paper: *A Comparative Study of Pre-trained Encoders for Low-Resource Named Entity Recognition*.
+This is the official implementation of our paper "FewIE"-paper: [*A Comparative Study of Pre-trained Encoders for Low-Resource Named Entity Recognition*](https://aclanthology.org/2022.repl4nlp-1.6/).
 
 ![Evaluation framework of few-shot NER](./docs/few_eval_framework.png)
 
